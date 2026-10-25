@@ -19,6 +19,8 @@ func Characters() []Character {
 		{"kappa", "A river tinkerer with a water dish, a patched shell, and a cucumber pencil."},
 		{"tanuki", "A leaf-capped woodland courier with an oversized tail and a lucky satchel."},
 		{"tengu", "A mountain lookout with a long red nose, feathered wings, and a maple fan."},
+		{"kurama", "Naruto's nine-tailed fox, with orange fur, dark eye markings, and a formidable tail fan."},
+		{"chopper", "One Piece's little reindeer doctor, with antlers, a blue nose, and a pink cross-marked hat."},
 		{"robot", "An energetic little tinkerer with a heart of gold."},
 		{"cat", "A playful companion with big feelings and a restless tail."},
 		{"ghost", "A sleepy little spirit cheering on your next build."},

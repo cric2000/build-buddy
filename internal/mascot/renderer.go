@@ -69,6 +69,10 @@ func Render(c Config) ([]byte, error) {
 		tanuki(d, r)
 	case "tengu":
 		tengu(d, r)
+	case "kurama":
+		kurama(d, r)
+	case "chopper":
+		chopper(d, r)
 	case "robot":
 		robot(d, r, p)
 	case "cat":
