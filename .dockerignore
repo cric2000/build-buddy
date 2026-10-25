@@ -8,3 +8,5 @@ examples
 *.svg
 coverage.out
 .vercel
+.env
+.env.*

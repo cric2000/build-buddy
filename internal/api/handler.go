@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"buildbuddy/internal/mascot"
+	"github.com/cric2000/build-buddy/internal/mascot"
 )
 
 type Handler struct {

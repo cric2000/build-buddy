@@ -14,7 +14,7 @@ import (
 	"testing"
 	"time"
 
-	"buildbuddy/internal/api"
+	"github.com/cric2000/build-buddy/internal/api"
 )
 
 func TestRenderCommand(t *testing.T) {

@@ -160,16 +160,16 @@ The hosted API requires no local setup. The instructions below are for contribut
 
 Go **1.26 or later**, using a supported stable patch release. Docker is optional. There are no third-party Go dependencies, so no `go.sum` is needed.
 
-No remote repository is configured yet. **Replace `YOUR-OWNER/YOUR-REPO` below with your actual repository** after publishing:
+Clone the source repository to develop locally:
 
 ```bash
-git clone https://github.com/YOUR-OWNER/YOUR-REPO.git buildbuddy
+git clone https://github.com/cric2000/build-buddy.git buildbuddy
 cd buildbuddy
 go build -trimpath -o bin/buildbuddy ./cmd/buildbuddy
 ./bin/buildbuddy serve
 ```
 
-From the checked-out source, `go install ./cmd/buildbuddy` installs the binary into `GOBIN` (or `GOPATH/bin`). The module currently uses the local name `buildbuddy`; set a real module path and update imports before offering remote `go install ...@version` instructions.
+From the checked-out source, `go install ./cmd/buildbuddy` installs the binary into `GOBIN` (or `GOPATH/bin`).
 
 ### Run the local server
 

@@ -16,9 +16,9 @@ import (
 	"syscall"
 	"time"
 
-	"buildbuddy/internal/api"
-	"buildbuddy/internal/config"
-	"buildbuddy/internal/mascot"
+	"github.com/cric2000/build-buddy/internal/api"
+	"github.com/cric2000/build-buddy/internal/config"
+	"github.com/cric2000/build-buddy/internal/mascot"
 )
 
 // Main runs the CLI or HTTP server and exits nonzero on failure.

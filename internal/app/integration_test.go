@@ -15,8 +15,8 @@ import (
 	"strings"
 	"testing"
 
-	"buildbuddy/internal/api"
-	"buildbuddy/internal/mascot"
+	"github.com/cric2000/build-buddy/internal/api"
+	"github.com/cric2000/build-buddy/internal/mascot"
 )
 
 func TestAPICLIRenderParity(t *testing.T) {

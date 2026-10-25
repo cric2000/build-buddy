@@ -2,3 +2,5 @@
 /coverage.out
 /mascot.svg
 .vercel/
+.vercel
+.env*
