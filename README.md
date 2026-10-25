@@ -8,16 +8,16 @@ BuildBuddy turns build status, test failures, and coverage into expressive anima
 
 Embed a mascot using BuildBuddy's public URL. No installation or deployment is required.
 
-**Production URL placeholder:** `https://YOUR-BUILDBUDDY-PROJECT.vercel.app`. The examples below will use the confirmed production domain once it is assigned.
+**Public API:** `https://build-buddy-kappa.vercel.app`
 
 ```markdown
-![BuildBuddy](https://YOUR-BUILDBUDDY-PROJECT.vercel.app/v1/mascot.svg?status=passing&character=cat&theme=dark)
+![BuildBuddy](https://build-buddy-kappa.vercel.app/v1/mascot.svg?status=passing&character=cat&theme=dark)
 ```
 
 You can also download the generated SVG:
 
 ```bash
-curl -f 'https://YOUR-BUILDBUDDY-PROJECT.vercel.app/v1/mascot.svg?status=passing&character=cat' -o mascot.svg
+curl -f 'https://build-buddy-kappa.vercel.app/v1/mascot.svg?status=passing&character=cat' -o mascot.svg
 ```
 
 The same URL works in an HTML `<img>` element, a dashboard, or a documentation page. The SVG has a square `viewBox`, an accessible title/description, and no scripts or external resources.
@@ -81,7 +81,7 @@ Mood rules are deterministic:
 Coverage never changes explicit status. Passing coverage ≥90 adds extra celebration; <50 adds a coverage hint. Coverage may describe the last measured run for any status. Positive `failed_tests` requires `failing`; `failing` with zero failed tests is contradictory (omit the count for a non-test failure). Ten or more failures add worry marks. `progress` requires `running`; even 100 does not infer a passing result. An explicit message overrides only the caption. `animate=false` resolves animation to `none`.
 
 ```bash
-curl -f 'https://YOUR-BUILDBUDDY-PROJECT.vercel.app/v1/mascot.json?status=failing&failed_tests=4&theme=dark'
+curl -f 'https://build-buddy-kappa.vercel.app/v1/mascot.json?status=failing&failed_tests=4&theme=dark'
 ```
 
 ```json
@@ -124,7 +124,7 @@ Mascot responses use `public, max-age=60, must-revalidate`; character/theme list
 Use the hosted BuildBuddy API directly:
 
 ```markdown
-![BuildBuddy](https://YOUR-BUILDBUDDY-PROJECT.vercel.app/v1/mascot.svg?status=passing&character=cat)
+![BuildBuddy](https://build-buddy-kappa.vercel.app/v1/mascot.svg?status=passing&character=cat)
 ```
 
 This displays the specified status. It does not read GitHub Actions results.
@@ -230,9 +230,9 @@ Tests cover mood rules, all 45 character/status/theme combinations with and with
 
 The repository includes `vercel.json` with Vercel's [Go framework preset](https://vercel.com/docs/functions/runtimes/go). The root `main.go` and the local CLI both call `internal/app`, preserving the same handlers, rendering, and server lifecycle. Vercel supplies `PORT`; the application already reads it.
 
-Connect this repository to the Vercel project, select `main` as its Production Branch, and keep the repository root as the project root. [Pushes to the production branch trigger automatic deployments](https://vercel.com/docs/git). The public production domain serves the updated API after a successful build and deployment.
+The Vercel project is connected to `cric2000/build-buddy`, with `main` as its Production Branch and the repository root as the project root. [Pushes to the production branch trigger automatic deployments](https://vercel.com/docs/git). The public production domain serves the updated API after a successful build and deployment.
 
-Replace the production URL placeholder in this README with the stable production domain once it is available. Consumers then embed that URL directly. Deployment of BuildBuddy updates the service; each mascot still reflects the status parameters supplied to it.
+The stable production domain is `https://build-buddy-kappa.vercel.app`. Consumers embed that URL directly. Deployment of BuildBuddy updates the service; each mascot still reflects the status parameters supplied to it.
 
 </details>
 
