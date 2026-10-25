@@ -24,10 +24,10 @@ jobs:
       - run: go build -trimpath -o bin/buildbuddy ./cmd/buildbuddy
       - name: Render and validate SVG
         run: |
-          ./bin/buildbuddy render --status passing --character cat --coverage 95 --output /tmp/mascot.svg
+          ./bin/buildbuddy render --status passing --character tanuki --coverage 95 --output /tmp/mascot.svg
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
           root = ET.parse('/tmp/mascot.svg').getroot()
           assert root.tag == '{http://www.w3.org/2000/svg}svg'
-          assert root.attrib['data-character'] == 'cat'
+          assert root.attrib['data-character'] == 'tanuki'
           PY

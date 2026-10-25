@@ -42,27 +42,29 @@ func kurama(d *drawing, r Resolved) {
 	d.add(`<path d="M151 219 Q136 218 135 233 L169 234 l3 -10 M193 224 l3 10 30 -1 Q225 219 210 219" fill="%s"/><path d="m143 229 -2 6 m11 -6 -1 6 m11 -6 0 6 m38 -5 0 5 m9 -6 1 6 m8 -6 2 5" fill="none" stroke="#f8dbac" stroke-width="2"/>`, fur)
 	angle := map[string]int{"passing": -4, "failing": 5, "running": 0, "queued": 11, "unknown": -10}[r.Status]
 	d.add(`<g transform="rotate(%d 180 140)"><path d="M136 121 Q119 94 129 65 Q153 81 157 112 M202 111 Q209 78 232 66 Q239 98 222 122" fill="%s"/><path d="M137 107 132 80 148 102 M213 104 228 80 224 109" fill="#4c302c" stroke="none"/><path d="M135 118 Q150 102 180 105 Q212 103 226 121 L234 137 224 138 235 150 222 152 225 164 208 165 Q198 181 180 184 Q161 181 151 167 L135 168 139 155 125 151 137 140 128 137Z" fill="%s"/><path d="m144 148 16 -4 20 9 19 -9 18 4 -10 22 -27 13 -27 -13Z" fill="%s" stroke="none"/><path d="m139 145 12 2 m-10 7 10 1 m59 -8 12 -3 m-12 10 11 -2" fill="none" stroke-width="2"/>`, angle, fur, fur, muzzle)
-	kuramaFace(d, r)
+	kuramaFace(d, r, fur)
 	d.add(`</g></g>`)
 }
 
-func kuramaFace(d *drawing, r Resolved) {
-	d.add(`<g data-part="kurama-expression"><path d="M141 118 158 124 166 142 153 136Z M219 117 201 124 194 142 208 136Z" fill="#3f2b2b" stroke="none"/>`)
+func kuramaFace(d *drawing, r Resolved, fur string) {
+	d.add(`<g data-part="kurama-expression">`)
+	if r.Status == "queued" {
+		d.add(`<path d="m140 128 6 3 -3 7 -5 -4Z m80 0 -6 3 3 7 5 -4Z" fill="#3f2b2b" stroke="none"/>`)
+	} else {
+		d.add(`<path d="M141 118 158 124 166 142 153 136Z M219 117 201 124 194 142 208 136Z" fill="#3f2b2b" stroke="none"/>`)
+	}
+	expressiveEyes(d, r, eyeStyle{left: 154, right: 206, y: 132, width: 10.5, height: 12.5, ink: "#3f2b2b", brow: "#3f2b2b", iris: "#c07a30", light: "#f7cf70", lid: fur, slit: true})
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M147 132 q8 -10 16 1 M198 132 q8 -10 16 -1" fill="none" stroke-width="3"/><path d="M160 160 Q179 184 200 159 L194 159 191 167 184 161 177 169 170 162 166 166Z" fill="#472d2b"/><path d="m164 161 6 2 -3 6Z m25 2 6 -3 -1 9Z" fill="#fff1d4" stroke="none"/>`)
+		d.add(`<path d="M160 162 Q179 185 200 161 L194 161 191 169 184 163 177 171 170 164 166 168Z" fill="#472d2b"/><path d="m164 163 6 2 -3 6Z m25 2 6 -3 -1 9Z" fill="#fff1d4" stroke="none"/>`)
 	case "failing":
-		d.add(`<path d="m145 121 18 -5 m34 -1 18 5" fill="none" stroke-width="3"/><path d="M147 132 q8 -6 16 2 l-3 9 -10 -2Z M198 134 q8 -7 16 -3 l-2 10 -11 2Z" fill="#fff1d4"/><path d="m156 133 0 6 m49 -6 0 6" stroke-width="3"/><path d="M161 170 Q180 156 199 169 l-5 7 -8 -5 -8 4 -8 -5 -6 5Z" fill="#472d2b"/><path d="m165 169 5 1 -3 5 m23 -5 5 -1 -2 6" fill="#fff1d4" stroke="none"/>`)
+		d.add(`<path d="M163 173 Q180 161 197 172" fill="none" stroke-width="2.5"/><path d="m166 172 3 5 3 -7 m16 0 4 5 2 -5" fill="#fff1d4" stroke-width="1.5"/>`)
 	case "running":
-		d.add(`<path d="M145 126 164 134 158 142 150 138Z M197 134 216 126 211 138 203 142Z" fill="#fff1d4"/><path d="m156 132 0 6 m49 -6 0 6 M146 123 l18 6 m33 0 18 -6" fill="none" stroke-width="3"/><path d="m162 165 17 3 20 -4" fill="none"/><path d="m168 166 3 6 3 -5 m14 0 3 4 3 -6" fill="#fff1d4" stroke-width="1.5"/>`)
+		d.add(`<path d="m162 167 17 3 20 -4" fill="none"/><path d="m168 168 3 6 3 -5 m14 0 3 4 3 -6" fill="#fff1d4" stroke-width="1.5"/>`)
 	case "queued":
-		d.add(`<path d="M147 133 q8 8 16 1 M198 134 q8 8 16 -1" fill="none" stroke-width="3"/><path d="M165 164 Q180 172 196 163" fill="none" stroke-width="2"/><path d="m168 166 3 6 3 -4 m14 -1 3 4 3 -7" fill="#fff1d4" stroke-width="1.5"/>`)
+		d.add(`<path d="M165 164 Q180 172 196 163" fill="none" stroke-width="2"/><path d="m168 166 3 6 3 -4 m14 -1 3 4 3 -7" fill="#fff1d4" stroke-width="1.5"/>`)
 	default:
-		d.add(`<path d="M146 131 q8 -5 16 2 l-2 9 -12 -1Z M197 127 q9 -8 19 -2 l-2 15 -14 2Z" fill="#fff1d4"/><path d="m155 132 0 6 m52 -11 0 10 M146 120 161 120 M197 115 213 110" fill="none" stroke-width="3"/><path d="M164 166 q16 5 31 -3" fill="none"/><path d="m170 167 3 6 3 -5" fill="#fff1d4" stroke-width="1.5"/>`)
+		d.add(`<path d="M164 168 q16 5 31 -3" fill="none"/><path d="m170 169 3 6 3 -5" fill="#fff1d4" stroke-width="1.5"/>`)
 	}
-	d.add(`<path d="M171 151 Q180 147 189 151 L181 158Z" fill="#3f2b2b" stroke-width="1.5"/><path d="m180 158 0 5" fill="none" stroke-width="2"/>`)
-	if r.Worried {
-		d.add(`<path d="M220 133 q-7 12 0 14 q7 -2 0 -14Z" fill="#a0d8df" stroke-width="1.5"/><path d="m137 113 -5 -6 m11 3 -1 -8" fill="none" stroke-width="2"/>`)
-	}
-	d.add(`</g>`)
+	d.add(`<path d="M171 152 Q180 148 189 152 L181 159Z" fill="#3f2b2b" stroke-width="1.5"/><path d="m180 159 0 5" fill="none" stroke-width="2"/></g>`)
 }

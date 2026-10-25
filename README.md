@@ -2,7 +2,7 @@
 
 **Your Build Has Feelings.**
 
-BuildBuddy turns build status, test failures, and coverage into expressive animated SVG companions. Embed Kappa, Tanuki, Tengu, Kurama, Chopper, or the original robot, cat, and ghost in a README, dashboard, documentation page, or website. Use the public API directly, or generate SVGs locally with the same Go rendering engine. No account or API key is required.
+BuildBuddy turns build status, test failures, and coverage into expressive animated SVG companions. Embed Kappa, Tanuki, Tengu, Kurama, or Chopper in a README, dashboard, documentation page, or website. Use the public API directly, or generate SVGs locally with the same Go rendering engine. No account or API key is required.
 
 ## Use the hosted API
 
@@ -47,12 +47,14 @@ The folklore and anime companions have their own expressions and poses:
 | `kurama` | Naruto's orange nine-tailed fox, with long ears, dark eye markings, and fangs | Raises its claws, frets, braces for work, curls up, or looks around |
 | `chopper` | One Piece's reindeer doctor, with antlers, a blue nose, and pink hat | Cheers, grabs his hat, studies a medical chart, dozes, or investigates |
 
-All five states have distinct artwork with animation disabled. The original `robot`, `cat`, and `ghost` remain available; the default stays `robot` for existing integrations.
+All five states have distinct artwork with animation disabled. Kappa is the default companion.
+
+Eyes react to the build too: passing builds get big round eyes with star-shaped catchlights; failures look sad, disappointed, or teary. Running builds concentrate, queued companions close their eyes, and an unknown status gets a wide-eyed curious look. Each companion keeps its own eye proportions, iris colors, and facial details.
 
 ## Features
 
-- Eight vector companions, five unmistakable moods, three coordinated themes.
-- Gentle bounce, shake, working motion, floating, blinks, and tail movement. Supports `prefers-reduced-motion` and `animate=false`; static artwork remains complete.
+- Five vector companions, five unmistakable moods, three coordinated themes.
+- Gentle bounce, shake, working motion, floating, blinks, and eye sparkles. Supports `prefers-reduced-motion` and `animate=false`; static artwork remains complete.
 - Coverage celebrations and warnings, worried expressions for many failures, and a running progress bar.
 - Shared HTTP/CLI validation and rendering, deterministic output, content-based ETags.
 - Standard-library-only Go, safe XML escaping, strict input limits, graceful shutdown, non-root Docker image.
@@ -74,7 +76,7 @@ The two mascot endpoints accept identical parameters:
 | Parameter | Default | Accepted values |
 | --- | --- | --- |
 | `status` | `unknown` | `passing`, `failing`, `running`, `queued`, `unknown` |
-| `character` | `robot` | `kappa`, `tanuki`, `tengu`, `kurama`, `chopper`, `robot`, `cat`, `ghost` |
+| `character` | `kappa` | `kappa`, `tanuki`, `tengu`, `kurama`, `chopper` |
 | `theme` | `light` | `light`, `dark`, `neon` |
 | `coverage` | omitted | Decimal integer, 0–100 |
 | `failed_tests` | omitted | Decimal integer, 0–100000 |
@@ -95,14 +97,14 @@ Mood rules are deterministic:
 | `queued` | sleepy | Floating and closed eyes |
 | `unknown` | curious | Subtle movement and blinks |
 
-Coverage never changes explicit status. Passing coverage ≥90 adds extra celebration; <50 adds a coverage hint. Coverage may describe the last measured run for any status. Positive `failed_tests` requires `failing`; `failing` with zero failed tests is contradictory (omit the count for a non-test failure). Ten or more failures add worry marks. `progress` requires `running`; even 100 does not infer a passing result. An explicit message overrides only the caption. `animate=false` resolves animation to `none`.
+Coverage never changes explicit status. Passing coverage ≥90 adds extra celebration; <50 adds a coverage hint. Coverage may describe the last measured run for any status. Positive `failed_tests` requires `failing`; `failing` with zero failed tests is contradictory (omit the count for a non-test failure). Failures without a count have sad, watery eyes; one to nine failed tests produce disappointed lids, and ten or more add flowing tears. `progress` requires `running`; even 100 does not infer a passing result. An explicit message overrides only the caption. `animate=false` resolves animation to `none`.
 
 ```bash
 curl -f 'https://build-buddy-kappa.vercel.app/v1/mascot.json?status=failing&failed_tests=4&theme=dark'
 ```
 
 ```json
-{"character":"robot","status":"failing","theme":"dark","coverage":null,"failed_tests":4,"progress":null,"animate":true,"size":300,"message":"4 failing tests","mood":"stressed","animation":"shake","celebration":false,"coverage_warning":false,"worried":false}
+{"character":"kappa","status":"failing","theme":"dark","coverage":null,"failed_tests":4,"progress":null,"animate":true,"size":300,"message":"4 failing tests","mood":"stressed","animation":"shake","celebration":false,"coverage_warning":false,"worried":false}
 ```
 
 Optional numeric fields are consistently `null` when omitted. Invalid input returns a predictable error:
@@ -121,7 +123,7 @@ Append these paths to the public API base URL above:
 /v1/mascot.svg?status=passing&coverage=96
 /v1/mascot.svg?status=failing&failed_tests=4
 /v1/mascot.svg?status=running&progress=65
-/v1/mascot.svg?status=queued&character=ghost
+/v1/mascot.svg?status=queued&character=tengu
 /v1/mascot.svg?status=passing&character=kappa&theme=neon
 /v1/mascot.svg?status=passing&character=kurama
 /v1/mascot.svg?status=running&character=chopper&progress=65
@@ -243,7 +245,7 @@ go test ./internal/mascot -run '^$' -bench BenchmarkRender -benchmem
 go test ./internal/mascot -run '^$' -fuzz FuzzRender -fuzztime 10s
 ```
 
-Tests cover mood rules, all 120 character/status/theme combinations with and without animation, XML validity, injection attempts, Unicode and numeric boundaries, deterministic concurrent rendering, HTTP errors/caching/HEAD, CLI output, byte-for-byte API/CLI parity, environment validation, live HTTP startup, and graceful shutdown. A repeatable integration test runs genuinely passing and failing Go tests, invokes the exact rendering/publication scripts used by the workflow, then reads the published SVG through a separate Git checkout. It checks both status transitions, unchanged-image no-ops, and an untouched development branch. The publishing integration test needs Git and Bash. Server integration tests require loopback networking; race detection requires a supported platform and C toolchain. `.github/workflows/ci.yml` checks formatting, vet, tests, race detection, compilation, and a rendered SVG parsed with Python's standard library.
+Tests cover mood rules, all 75 character/status/theme combinations with and without animation, seven distinct eye expressions independent of poses and captions, XML validity, injection attempts, Unicode and numeric boundaries, deterministic concurrent rendering, HTTP errors/caching/HEAD, CLI output, byte-for-byte API/CLI parity, environment validation, live HTTP startup, and graceful shutdown. A repeatable integration test runs genuinely passing and failing Go tests, invokes the exact rendering/publication scripts used by the workflow, then reads the published SVG through a separate Git checkout. It checks both status transitions, unchanged-image no-ops, and an untouched development branch. The publishing integration test needs Git and Bash. Server integration tests require loopback networking; race detection requires a supported platform and C toolchain. `.github/workflows/ci.yml` checks formatting, vet, tests, race detection, compilation, and a rendered SVG parsed with Python's standard library.
 
 ### Maintainers: Vercel deployment
 
@@ -265,7 +267,7 @@ go run ./cmd/buildbuddy render \
   --coverage 96 --output mascot.svg
 
 ./bin/buildbuddy render --status failing --failed_tests 4 --animate=false --output mascot.svg
-./bin/buildbuddy render --status queued --character ghost --output - > mascot.svg
+./bin/buildbuddy render --status queued --character tengu --output - > mascot.svg
 ./bin/buildbuddy render --help
 ```
 

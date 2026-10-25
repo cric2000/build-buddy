@@ -42,7 +42,7 @@ func kappa(d *drawing, r Resolved) {
 	if r.Status == "failing" {
 		d.add(`<path d="M209 95 q15 -9 18 1 m-13 -7 5 -8" fill="none" stroke="%s"/><path d="M233 106 q-8 10 0 12 q8 -2 0 -12Z" fill="%s" stroke-width="1.8"/>`, water, water)
 	}
-	kappaFace(d, r, water)
+	kappaFace(d, r)
 	d.add(`<path d="m139 153 4 1 m-2 6 4 -1 m69 -5 4 -2 m-3 7 4 -1" stroke="#72935c" stroke-width="2"/></g></g>`)
 }
 
@@ -50,22 +50,20 @@ func cucumber(d *drawing, x, y, angle int) {
 	d.add(`<g data-part="cucumber-pencil" transform="translate(%d %d) rotate(%d)"><path d="M-5 15 -6 -17 Q0 -25 6 -17 L5 15 0 24Z" fill="#426d43"/><path d="m-2 -16 1 29" stroke="#b8ce79" stroke-width="2"/><path d="m-5 15 10 0 -5 9Z" fill="#f2d39a"/><path d="m-1 21 1 3 1 -3" fill="#283e35" stroke-width="1"/></g>`, x, y, angle)
 }
 
-func kappaFace(d *drawing, r Resolved, water string) {
+func kappaFace(d *drawing, r Resolved) {
 	d.add(`<g data-part="kappa-expression">`)
+	expressiveEyes(d, r, eyeStyle{left: 157, right: 203, y: 139, width: 11, height: 13, ink: "#283e35", brow: "#283e35", iris: "#527d55", light: "#b8dda0", lid: "#e9e4b8"})
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M149 142 q8 -15 16 0 M193 142 q8 -15 16 0" fill="none" stroke-width="3.4"/><path d="M166 150 Q181 144 198 150 L191 162 Q180 172 170 160Z" fill="#c59348"/><path d="m171 154 q10 5 21 0" fill="none" stroke-width="2"/>`)
+		d.add(`<path d="M166 154 Q181 148 198 154 L191 165 Q180 175 170 164Z" fill="#c59348"/><path d="m172 158 q9 5 19 0" fill="none" stroke-width="2"/>`)
 	case "failing":
-		d.add(`<path d="m148 128 17 -5 m29 0 17 7" fill="none"/><ellipse cx="158" cy="142" rx="7" ry="10" fill="#fff9dc"/><ellipse cx="201" cy="143" rx="7" ry="10" fill="#fff9dc"/><path d="m159 140 0 7 m41 -7 0 7" stroke-width="4"/><path d="M166 158 Q180 145 196 158 L190 165 Q180 159 171 165Z" fill="#c59348"/>`)
+		d.add(`<path d="M166 159 Q180 149 196 159 L190 166 Q180 162 171 166Z" fill="#c59348"/><path d="m174 162 q7 -4 14 0" fill="none" stroke-width="1.5"/>`)
 	case "running":
-		d.add(`<path d="M147 133 166 139 M193 139 213 132" fill="none" stroke-width="3.5"/><path d="M150 141 q7 15 14 0 M195 141 q7 15 14 0" fill="#fff9dc"/><path d="m158 142 0 5 m43 -5 0 5" stroke-width="4"/><path d="M165 154 Q181 148 197 153 L191 161 170 163Z" fill="#c59348"/><path d="m174 157 15 -1" fill="none" stroke-width="2"/>`)
+		d.add(`<path d="M165 156 Q181 150 197 155 L191 163 170 165Z" fill="#c59348"/><path d="m174 159 15 -1" fill="none" stroke-width="2"/>`)
 	case "queued":
-		d.add(`<path d="M149 142 q8 9 16 0 M194 142 q8 9 16 0" fill="none"/><path d="M166 156 Q181 148 197 156 L190 163 172 163Z" fill="#c59348"/><ellipse cx="182" cy="160" rx="4" ry="3" fill="#283e35" stroke="none"/>`)
+		d.add(`<path d="M166 156 Q181 148 197 156 L190 163 172 163Z" fill="#c59348"/><ellipse cx="182" cy="160" rx="4" ry="3" fill="#283e35" stroke="none"/>`)
 	default:
-		d.add(`<ellipse cx="158" cy="142" rx="8" ry="10" fill="#fff9dc"/><ellipse cx="202" cy="139" rx="10" ry="12" fill="#fff9dc"/><path d="m161 141 0 6 m44 -9 0 8 M149 125 165 127 M192 121 209 117" fill="none" stroke-width="3"/><path d="M166 157 Q181 148 198 155 L188 162 173 163Z" fill="#c59348"/><path d="m178 157 9 0" stroke-width="1.5"/>`)
-	}
-	if r.Worried {
-		d.add(`<path d="M217 133 q-8 13 0 15 q8 -2 0 -15Z" fill="%s" stroke-width="1.5"/><path d="m139 119 -4 -6 m7 4 -1 -7" fill="none"/>`, water)
+		d.add(`<path d="M166 158 Q181 151 198 156 L188 164 173 165Z" fill="#c59348"/><path d="m178 160 9 0" stroke-width="1.5"/>`)
 	}
 	d.add(`</g>`)
 }

@@ -23,7 +23,7 @@ func request(h http.Handler, method, path string) *httptest.ResponseRecorder {
 func TestEndpoints(t *testing.T) {
 	h := New(quiet())
 	for _, tt := range []struct{ path, mime, contains string }{
-		{"/healthz", "application/json", `"status":"ok"`}, {"/v1/characters", "application/json", `"cat"`}, {"/v1/themes", "application/json", `"neon"`},
+		{"/healthz", "application/json", `"status":"ok"`}, {"/v1/characters", "application/json", `"tanuki"`}, {"/v1/themes", "application/json", `"neon"`},
 		{"/v1/mascot.svg?status=passing", "image/svg+xml", `data-mood="happy"`}, {"/v1/mascot.json?status=failing&failed_tests=4", "application/json", `"message":"4 failing tests"`},
 	} {
 		t.Run(tt.path, func(t *testing.T) {
@@ -47,6 +47,9 @@ func TestEndpoints(t *testing.T) {
 	var body map[string]any
 	if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
 		t.Fatal(err)
+	}
+	if body["character"] != "kappa" {
+		t.Fatal("unexpected default companion", body["character"])
 	}
 	for _, k := range []string{"coverage", "failed_tests", "progress"} {
 		if v, ok := body[k]; !ok || v != nil {
@@ -91,7 +94,7 @@ func TestErrors(t *testing.T) {
 }
 func TestCaching(t *testing.T) {
 	h := New(quiet())
-	path := "/v1/mascot.svg?status=passing&character=cat"
+	path := "/v1/mascot.svg?status=passing&character=tanuki"
 	first := request(h, "GET", path)
 	etag := first.Header().Get("ETag")
 	if etag != fmt.Sprintf(`"%x"`, sha256.Sum256(first.Body.Bytes())) || !strings.Contains(first.Header().Get("Cache-Control"), "max-age=60") {
@@ -121,7 +124,7 @@ func TestCaching(t *testing.T) {
 	if w.Code != 200 {
 		t.Fatal("stale returned 304")
 	}
-	normalized := request(h, "GET", "/v1/mascot.svg?character=cat&status=passing&size=0300&animate=true&theme=light")
+	normalized := request(h, "GET", "/v1/mascot.svg?character=tanuki&status=passing&size=0300&animate=true&theme=light")
 	if !bytes.Equal(first.Body.Bytes(), normalized.Body.Bytes()) {
 		t.Fatal("normalization mismatch")
 	}
@@ -134,7 +137,7 @@ func TestCaching(t *testing.T) {
 }
 func TestSVGAndJSONAgree(t *testing.T) {
 	h := New(quiet())
-	q := "?status=running&progress=65&character=ghost&animate=false"
+	q := "?status=running&progress=65&character=tengu&animate=false"
 	j := request(h, "GET", "/v1/mascot.json"+q)
 	var resolved struct{ Mood, Message, Animation string }
 	if err := json.Unmarshal(j.Body.Bytes(), &resolved); err != nil {

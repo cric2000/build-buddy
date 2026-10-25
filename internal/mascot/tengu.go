@@ -44,27 +44,25 @@ func tengu(d *drawing, r Resolved) {
 	d.add(`<g data-part="maple-fan" transform="translate(%d %d) rotate(%d)"><path d="M0 14 V-4" fill="none" stroke="#a88058" stroke-width="5"/><path d="M0 1 Q-17 -2 -21 -15 L-11 -13 -13 -27 -3 -20 1 -35 7 -21 18 -28 15 -14 25 -16 Q20 -1 0 1Z" fill="%s"/><path d="M0 0 1 -25 M0 -1 -13 -16 M1 -2 16 -17" fill="none" stroke="#9a5749" stroke-width="1.6"/></g>`, x, y, angle, paper)
 	angle = map[string]int{"passing": -8, "failing": 7, "running": 5, "queued": 13, "unknown": -12}[r.Status]
 	d.add(`<g transform="rotate(%d 178 131)"><path d="M132 136 119 142 125 125 115 123 130 110 125 101 145 98 150 83 166 90 181 76 192 89 212 84 214 101 235 106 226 118 237 132 224 137 229 151 208 156 146 159Z" fill="%s"/><path d="M137 115 Q143 93 178 96 Q211 97 218 120 L213 150 Q207 174 179 179 Q148 172 140 150Z" fill="%s"/><path d="m144 156 13 4 -3 11 14 -5 10 13 9 -12 15 5 -2 -13 14 -5 -4 18 -18 10 -22 0 -23 -15Z" fill="%s" stroke="none"/><path d="M149 101 Q177 89 207 104" fill="none" stroke="#f1a17b" stroke-width="2"/>`, angle, feather, red, feather)
-	tenguFace(d, r)
+	tenguFace(d, r, red)
 	// The long nose is drawn after the eyes to maintain a clear three-quarter face.
 	d.add(`<g data-part="long-nose"><path d="M174 136 Q185 128 194 135 L225 141 Q233 144 227 149 L190 149 Q179 153 174 146Z" fill="%s"/><path d="m192 140 28 4" fill="none" stroke="#f4ac84" stroke-width="2"/><path d="m177 155 q9 4 16 -1" fill="none" stroke-width="2"/></g><g data-part="mountain-cap"><path d="m162 95 3 -20 25 -3 9 19 -19 9Z" fill="#41424c"/><path d="m165 75 13 10 12 -13 M178 85 l2 15" fill="none" stroke="#d3b077" stroke-width="1.8"/><path d="m166 95 -11 14 m39 -15 13 14" fill="none" stroke="#bb8a51" stroke-width="2"/></g></g></g>`, red)
 }
 
-func tenguFace(d *drawing, r Resolved) {
+func tenguFace(d *drawing, r Resolved, red string) {
 	d.add(`<g data-part="tengu-expression">`)
+	expressiveEyes(d, r, eyeStyle{left: 153, right: 196, y: 125, width: 9.5, height: 11.5, ink: "#302f38", brow: "#302f38", iris: "#8b5264", light: "#e6a6b5", lid: red})
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M145 130 q8 -13 17 -2 M186 127 q8 -13 17 0" fill="none" stroke-width="3.5"/><path d="M160 158 Q170 174 182 158" fill="#382f39"/><path d="m167 163 9 0" stroke="#e6b799" stroke-width="2"/>`)
+		d.add(`<path d="M160 158 Q170 174 182 158" fill="#382f39"/><path d="m167 163 9 0" stroke="#e6b799" stroke-width="2"/>`)
 	case "failing":
-		d.add(`<path d="m144 116 17 -5 m24 -1 18 6" fill="none" stroke-width="4"/><path d="M145 127 q8 -5 17 0 l-2 10 -13 -1Z M186 125 q8 -5 16 1 l-2 9 -12 0Z" fill="#f8e8c7"/><path d="m154 128 0 6 m40 -6 0 5" stroke-width="3.5"/><path d="m159 164 q10 -10 21 -3" fill="none"/>`)
+		d.add(`<path d="m159 165 q10 -10 21 -3" fill="none" stroke-width="2.5"/>`)
 	case "running":
-		d.add(`<path d="m144 119 19 7 m22 -1 19 -7" fill="none" stroke-width="5"/><path d="m146 129 16 0 -4 8 -10 -1Z m41 -1 14 -1 -3 8 -9 -1Z" fill="#fff0cc"/><path d="m155 130 0 4 m40 -5 0 4 m-34 30 18 0" fill="none" stroke-width="3"/>`)
+		d.add(`<path d="m161 163 18 0" fill="none" stroke-width="2"/>`)
 	case "queued":
-		d.add(`<path d="M144 130 q9 10 18 0 M186 129 q9 10 18 0" fill="none"/><ellipse cx="170" cy="162" rx="4" ry="5" fill="#382f39" stroke="none"/>`)
+		d.add(`<ellipse cx="170" cy="162" rx="4" ry="5" fill="#382f39" stroke="none"/>`)
 	default:
-		d.add(`<path d="m144 114 17 2 m25 -5 17 -7" fill="none" stroke-width="4"/><path d="M145 126 q8 -5 16 0 v11 h-14Z M185 124 q9 -10 19 0 v11 h-17Z" fill="#fff0cc"/><path d="m155 128 0 6 m42 -8 0 7 M163 164 q8 -5 14 -1" fill="none" stroke-width="3"/>`)
-	}
-	if r.Worried {
-		d.add(`<path d="M211 119 q-7 11 0 13 q7 -2 0 -13Z" fill="#9bd2d6" stroke-width="1.5"/><path d="m134 109 -5 -6 m10 3 -2 -7" fill="none" stroke-width="2"/>`)
+		d.add(`<path d="M163 164 q8 -5 14 -1" fill="none" stroke-width="2"/>`)
 	}
 	d.add(`</g>`)
 }

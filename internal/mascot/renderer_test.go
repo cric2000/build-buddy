@@ -125,7 +125,7 @@ func TestRenderEscapesText(t *testing.T) {
 	if _, err := Render(c); err == nil {
 		t.Fatal("invalid UTF-8 accepted")
 	}
-	c.Character = `robot" onload="alert(1)`
+	c.Character = `kappa" onload="alert(1)`
 	if _, err := Render(c); err == nil {
 		t.Fatal("invalid identifier accepted")
 	}
@@ -157,7 +157,7 @@ func TestMetricsAndDimensions(t *testing.T) {
 }
 func TestConcurrentRender(t *testing.T) {
 	c := Default()
-	c.Character = "cat"
+	c.Character = "tanuki"
 	want, _ := Render(c)
 	var wg sync.WaitGroup
 	for i := 0; i < 64; i++ {
@@ -191,7 +191,7 @@ func BenchmarkRender(b *testing.B) {
 	}
 }
 func FuzzRender(f *testing.F) {
-	for _, s := range []string{"Hello", `<script>&\"`, strings.Repeat("猫", 80), "\x00"} {
+	for _, s := range []string{"Hello", `<script>&\"`, strings.Repeat("森", 80), "\x00"} {
 		f.Add(s)
 	}
 	f.Fuzz(func(t *testing.T, message string) {

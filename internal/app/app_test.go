@@ -21,7 +21,7 @@ import (
 func TestRenderCommand(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "mascot.svg")
 	var out, errs bytes.Buffer
-	err := run(context.Background(), []string{"render", "--status", "passing", "--character", "cat", "--theme", "dark", "--animate=false", "--output", path}, os.Getenv, &out, &errs)
+	err := run(context.Background(), []string{"render", "--status", "passing", "--character", "tanuki", "--theme", "dark", "--animate=false", "--output", path}, os.Getenv, &out, &errs)
 	if err != nil {
 		t.Fatal(err, errs.String())
 	}
@@ -33,12 +33,15 @@ func TestRenderCommand(t *testing.T) {
 		XMLName   xml.Name
 		Character string `xml:"data-character,attr"`
 	}
-	if err := xml.Unmarshal(b, &doc); err != nil || doc.Character != "cat" || bytes.Contains(b, []byte("<style>")) {
+	if err := xml.Unmarshal(b, &doc); err != nil || doc.Character != "tanuki" || bytes.Contains(b, []byte("<style>")) {
 		t.Fatalf("invalid SVG %v", err)
 	}
 	out.Reset()
 	if err := run(context.Background(), []string{"render", "--output", "-"}, os.Getenv, &out, &errs); err != nil || !strings.HasPrefix(out.String(), "<svg") {
 		t.Fatal("stdout render failed", err)
+	}
+	if !strings.Contains(out.String(), `data-character="kappa"`) {
+		t.Fatal("unexpected default companion")
 	}
 }
 func TestCommandErrors(t *testing.T) {

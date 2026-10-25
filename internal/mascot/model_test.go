@@ -2,9 +2,20 @@ package mascot
 
 import (
 	"net/url"
+	"slices"
 	"strings"
 	"testing"
 )
+
+func TestCharacterCatalog(t *testing.T) {
+	want := []string{"kappa", "tanuki", "tengu", "kurama", "chopper"}
+	if !slices.Equal(CharacterNames(), want) {
+		t.Fatalf("unexpected catalog: %v", CharacterNames())
+	}
+	if Default().Character != "kappa" {
+		t.Fatal("Kappa should be the default companion")
+	}
+}
 
 func TestResolve(t *testing.T) {
 	for _, tt := range []struct {
@@ -48,7 +59,7 @@ func TestInvalid(t *testing.T) {
 	}
 }
 func TestBoundaries(t *testing.T) {
-	for _, raw := range []string{"size=100&coverage=0", "size=1000&coverage=100", "status=failing&failed_tests=100000", "status=running&progress=0", "status=running&progress=100", "animate=false", "message=" + strings.Repeat("猫", 80)} {
+	for _, raw := range []string{"size=100&coverage=0", "size=1000&coverage=100", "status=failing&failed_tests=100000", "status=running&progress=0", "status=running&progress=100", "animate=false", "message=" + strings.Repeat("森", 80)} {
 		q, _ := url.ParseQuery(raw)
 		if _, err := Parse(q); err != nil {
 			t.Fatal(raw, err)

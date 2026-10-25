@@ -45,22 +45,19 @@ func tanuki(d *drawing, r Resolved) {
 }
 
 func tanukiFace(d *drawing, r Resolved, cream, dark string) {
-	d.add(`<g data-part="tanuki-expression" stroke="%s">`, cream)
+	d.add(`<g data-part="tanuki-expression" stroke="%s">`, dark)
+	expressiveEyes(d, r, eyeStyle{left: 153, right: 204, y: 141, width: 11.5, height: 13, ink: "#382f2b", brow: cream, iris: "#80613e", light: "#e2bd75", lid: dark})
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M143 143 q8 -13 16 0 M197 143 q8 -13 16 0" fill="none" stroke-width="3.5"/><path d="M165 164 Q178 180 191 164" fill="%s" stroke="%s" stroke-width="2"/><path d="m173 169 10 0" stroke="#df9a80" stroke-width="3"/>`, dark, dark)
+		d.add(`<path d="M165 165 Q178 181 191 165" fill="%s" stroke-width="2"/><path d="m173 170 10 0" stroke="#df9a80" stroke-width="3"/>`, dark)
 	case "failing":
-		d.add(`<path d="m140 132 20 -6 m35 0 20 6" fill="none"/><ellipse cx="153" cy="144" rx="4" ry="7" fill="%s" stroke="none"/><ellipse cx="203" cy="144" rx="4" ry="7" fill="%s" stroke="none"/><path d="M166 173 Q178 159 190 173" fill="none" stroke="%s"/>`, cream, cream, dark)
+		d.add(`<path d="M166 174 Q178 163 190 174" fill="none" stroke-width="2.5"/>`)
 	case "running":
-		d.add(`<path d="m141 136 20 5 m34 0 20 -5" fill="none" stroke-width="3.5"/><path d="m152 144 0 5 m51 -5 0 5" stroke-width="4"/><path d="m169 170 18 -1" fill="none" stroke="%s"/>`, dark)
+		d.add(`<path d="m169 171 18 -1" fill="none"/>`)
 	case "queued":
-		d.add(`<path d="M141 143 q10 9 20 0 M195 143 q10 9 20 0" fill="none"/><ellipse cx="179" cy="171" rx="4" ry="5" fill="%s" stroke="none"/>`, dark)
+		d.add(`<ellipse cx="179" cy="171" rx="4" ry="5" fill="%s" stroke="none"/>`, dark)
 	default:
-		d.add(`<ellipse cx="151" cy="143" rx="4" ry="6" fill="%s" stroke="none"/><ellipse cx="204" cy="141" rx="6" ry="8" fill="%s" stroke="none"/><path d="m141 129 17 1 m36 -4 20 -5" fill="none"/><path d="M172 172 q7 -7 13 -2" fill="none" stroke="%s"/>`, cream, cream, dark)
+		d.add(`<path d="M172 173 q7 -7 13 -2" fill="none"/>`)
 	}
-	d.add(`<path d="M168 155 Q178 149 188 155 L181 162 Q176 165 168 155Z" fill="%s" stroke="%s" stroke-width="2"/><path d="M178 162 v5 M146 158 l2 0 m5 2 2 0 m45 -1 2 0 m5 -3 2 0" stroke="%s" stroke-width="1.5"/>`, dark, dark, dark)
-	if r.Worried {
-		d.add(`<path d="M218 132 q-7 11 0 13 q7 -2 0 -13Z" fill="#a6ced1" stroke="%s" stroke-width="1.5"/><path d="m131 121 -5 -6 m10 4 -2 -8" fill="none" stroke="%s"/>`, dark, dark)
-	}
-	d.add(`</g>`)
+	d.add(`<path d="M168 156 Q178 150 188 156 L181 163 Q176 166 168 156Z" fill="%s" stroke-width="2"/><path d="M178 163 v5 M142 159 l2 0 m5 2 2 0 m53 -1 2 0 m5 -3 2 0" stroke-width="1.5"/></g>`, dark)
 }
