@@ -7,3 +7,4 @@ examples
 .github
 *.svg
 coverage.out
+.vercel

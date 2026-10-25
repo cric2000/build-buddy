@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"bytes"
@@ -87,7 +87,7 @@ func TestPublishFromActualTestResults(t *testing.T) {
 	binary := filepath.Join(temp, "buildbuddy")
 	remote := filepath.Join(temp, "remote.git")
 	work := filepath.Join(temp, "source")
-	command(t, ".", nil, "go", "build", "-o", binary, ".")
+	command(t, ".", nil, "go", "build", "-o", binary, "../../cmd/buildbuddy")
 	command(t, temp, nil, "git", "init", "--bare", "--initial-branch=main", remote)
 	command(t, temp, nil, "git", "clone", remote, work)
 	command(t, work, nil, "git", "config", "user.name", "Integration test")
