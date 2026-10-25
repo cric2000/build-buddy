@@ -1,0 +1,85 @@
+# Copy to .github/workflows/mascot.yml in this repository.
+# If your default branch is not main, change the branch below.
+name: Publish build mascot
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: buildbuddy-mascot
+  cancel-in-progress: false
+jobs:
+  test-and-render:
+    # Manual runs on other branches must never replace the default branch badge.
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    outputs:
+      test_outcome: ${{ steps.tests.outcome }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+      # Build the renderer first. A compile failure cannot render its own badge.
+      - run: go build -o /tmp/buildbuddy ./cmd/buildbuddy
+      - name: Run project tests
+        id: tests
+        continue-on-error: true
+        run: go test ./...
+      - name: Generate SVG for the actual test result
+        env:
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+        run: |
+          status=failing
+          if [ "$TEST_OUTCOME" = success ]; then status=passing; fi
+          /tmp/buildbuddy render --status "$status" --character cat --theme dark --output /tmp/mascot.svg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: buildbuddy-mascot
+          path: /tmp/mascot.svg
+          if-no-files-found: error
+          retention-days: 1
+  publish:
+    needs: test-and-render
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          # Authenticated git push is confined to this trusted default-branch job.
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: buildbuddy-mascot
+          path: ${{ runner.temp }}/mascot
+      - name: Publish to the dedicated badge branch
+        env:
+          SVG_PATH: ${{ runner.temp }}/mascot/mascot.svg
+          BADGE_REPO: ${{ runner.temp }}/badge-repo
+        run: |
+          set -eu
+          if git show-ref --verify --quiet refs/remotes/origin/badge-artifact; then
+            git worktree add "$BADGE_REPO" -B badge-artifact origin/badge-artifact
+          else
+            git worktree add --detach "$BADGE_REPO"
+            git -C "$BADGE_REPO" switch --orphan badge-artifact
+          fi
+          cp "$SVG_PATH" "$BADGE_REPO/mascot.svg"
+          cd "$BADGE_REPO"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add mascot.svg
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update build mascot [skip ci]'
+            git push origin HEAD:refs/heads/badge-artifact
+          fi
+      - name: Preserve test failure in workflow result
+        if: needs.test-and-render.outputs.test_outcome != 'success'
+        run: exit 1

@@ -1,0 +1,33 @@
+name: CI
+on:
+  push:
+    branches-ignore: [badge-artifact]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Check formatting
+        run: test -z "$(gofmt -l cmd internal)"
+      - run: go vet ./...
+      - run: go test ./...
+      - run: go test -race ./...
+      - run: go build -trimpath -o bin/buildbuddy ./cmd/buildbuddy
+      - name: Render and validate SVG
+        run: |
+          ./bin/buildbuddy render --status passing --character cat --coverage 95 --output /tmp/mascot.svg
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          root = ET.parse('/tmp/mascot.svg').getroot()
+          assert root.tag == '{http://www.w3.org/2000/svg}svg'
+          assert root.attrib['data-character'] == 'cat'
+          PY

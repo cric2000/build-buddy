@@ -1,0 +1,9 @@
+.git
+.agents
+.aws
+.codex
+bin
+examples
+.github
+*.svg
+coverage.out
