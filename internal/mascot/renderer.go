@@ -63,6 +63,12 @@ func Render(c Config) ([]byte, error) {
 	decorations(d, r, p)
 	d.add(`<g class="buddy" stroke="%s" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">`, p.ink)
 	switch c.Character {
+	case "kappa":
+		kappa(d, r)
+	case "tanuki":
+		tanuki(d, r)
+	case "tengu":
+		tengu(d, r)
 	case "robot":
 		robot(d, r, p)
 	case "cat":

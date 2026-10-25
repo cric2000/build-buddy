@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/cric2000/build-buddy/internal/api"
+	"github.com/cric2000/build-buddy/internal/mascot"
 )
 
 func TestRenderCommand(t *testing.T) {
@@ -60,6 +61,13 @@ func TestHelp(t *testing.T) {
 		err := run(context.Background(), args, os.Getenv, &out, &out)
 		if err != nil || out.Len() == 0 {
 			t.Fatal("help", err)
+		}
+		if args[0] == "render" {
+			for _, character := range mascot.Characters() {
+				if !strings.Contains(out.String(), character.Name) {
+					t.Fatalf("render help omits %s", character.Name)
+				}
+			}
 		}
 	}
 }

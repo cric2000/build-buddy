@@ -13,5 +13,5 @@ result=0
 "$@" || result=$?
 status=passing
 if [ "$result" -ne 0 ]; then status=failing; fi
-"$renderer" render --status "$status" --character cat --theme dark --output "$output"
+"$renderer" render --status "$status" --character kappa --theme dark --output "$output"
 exit "$result"

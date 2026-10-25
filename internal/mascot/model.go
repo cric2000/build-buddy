@@ -15,7 +15,23 @@ type Character struct {
 }
 
 func Characters() []Character {
-	return []Character{{"robot", "An energetic little tinkerer with a heart of gold."}, {"cat", "A playful companion with big feelings and a restless tail."}, {"ghost", "A sleepy little spirit cheering on your next build."}}
+	return []Character{
+		{"kappa", "A river tinkerer with a water dish, a patched shell, and a cucumber pencil."},
+		{"tanuki", "A leaf-capped woodland courier with an oversized tail and a lucky satchel."},
+		{"tengu", "A mountain lookout with a long red nose, feathered wings, and a maple fan."},
+		{"robot", "An energetic little tinkerer with a heart of gold."},
+		{"cat", "A playful companion with big feelings and a restless tail."},
+		{"ghost", "A sleepy little spirit cheering on your next build."},
+	}
+}
+
+func CharacterNames() []string {
+	characters := Characters()
+	names := make([]string, len(characters))
+	for i, character := range characters {
+		names[i] = character.Name
+	}
+	return names
 }
 func Themes() []string { return []string{"light", "dark", "neon"} }
 
@@ -86,8 +102,8 @@ func Parse(q url.Values) (Config, error) {
 }
 
 func (c Config) Validate() error {
-	if !oneOf(c.Character, "robot", "cat", "ghost") {
-		return fmt.Errorf("character must be robot, cat, or ghost")
+	if !oneOf(c.Character, CharacterNames()...) {
+		return fmt.Errorf("character must be one of: %s", strings.Join(CharacterNames(), ", "))
 	}
 	if !oneOf(c.Status, "passing", "failing", "running", "queued", "unknown") {
 		return fmt.Errorf("status must be passing, failing, running, queued, or unknown")

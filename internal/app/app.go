@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -99,7 +100,7 @@ func render(args []string, stdout, stderr io.Writer) error {
 	fs.SetOutput(stderr)
 	values := map[string]*singleFlag{}
 	for _, f := range []struct{ name, def, help string }{
-		{"status", "unknown", "passing, failing, running, queued, unknown"}, {"character", "robot", "robot, cat, ghost"}, {"theme", "light", "light, dark, neon"},
+		{"status", "unknown", "passing, failing, running, queued, unknown"}, {"character", "robot", strings.Join(mascot.CharacterNames(), ", ")}, {"theme", "light", "light, dark, neon"},
 		{"coverage", "", "coverage percentage (0–100)"}, {"failed_tests", "", "failed tests (0–100000)"}, {"progress", "", "running progress (0–100)"}, {"animate", "true", "true or false; use --animate=false"}, {"size", "300", "width and height in pixels (100–1000)"}, {"message", "", "custom caption (at most 80 characters)"},
 	} {
 		value := &singleFlag{value: f.def}
