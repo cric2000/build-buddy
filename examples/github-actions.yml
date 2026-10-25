@@ -27,17 +27,10 @@ jobs:
           cache: false
       # Build the renderer first. A compile failure cannot render its own badge.
       - run: go build -o /tmp/buildbuddy ./cmd/buildbuddy
-      - name: Run project tests
+      - name: Run project tests and render their result
         id: tests
         continue-on-error: true
-        run: go test ./...
-      - name: Generate SVG for the actual test result
-        env:
-          TEST_OUTCOME: ${{ steps.tests.outcome }}
-        run: |
-          status=failing
-          if [ "$TEST_OUTCOME" = success ]; then status=passing; fi
-          /tmp/buildbuddy render --status "$status" --character cat --theme dark --output /tmp/mascot.svg
+        run: bash examples/render-test-result.sh /tmp/buildbuddy /tmp/mascot.svg go test ./...
       - uses: actions/upload-artifact@v4
         with:
           name: buildbuddy-mascot
@@ -63,23 +56,7 @@ jobs:
         env:
           SVG_PATH: ${{ runner.temp }}/mascot/mascot.svg
           BADGE_REPO: ${{ runner.temp }}/badge-repo
-        run: |
-          set -eu
-          if git show-ref --verify --quiet refs/remotes/origin/badge-artifact; then
-            git worktree add "$BADGE_REPO" -B badge-artifact origin/badge-artifact
-          else
-            git worktree add --detach "$BADGE_REPO"
-            git -C "$BADGE_REPO" switch --orphan badge-artifact
-          fi
-          cp "$SVG_PATH" "$BADGE_REPO/mascot.svg"
-          cd "$BADGE_REPO"
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add mascot.svg
-          if ! git diff --cached --quiet; then
-            git commit -m 'Update build mascot [skip ci]'
-            git push origin HEAD:refs/heads/badge-artifact
-          fi
+        run: bash examples/publish-mascot.sh
       - name: Preserve test failure in workflow result
         if: needs.test-and-render.outputs.test_outcome != 'success'
         run: exit 1

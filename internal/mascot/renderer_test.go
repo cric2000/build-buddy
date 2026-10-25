@@ -203,3 +203,59 @@ func FuzzRender(f *testing.F) {
 		}
 	})
 }
+
+// Ignore captions, status labels, decorations, and root metadata: the character
+// itself must communicate a different mood when all motion is disabled.
+func TestStaticCharacterMoodsAreDistinct(t *testing.T) {
+	for _, character := range Characters() {
+		for _, theme := range Themes() {
+			t.Run(character.Name+"/"+theme, func(t *testing.T) {
+				seen := map[string]string{}
+				for _, status := range []string{"passing", "failing", "running", "queued", "unknown"} {
+					c := Default()
+					c.Character = character.Name
+					c.Theme = theme
+					c.Status = status
+					c.Animate = false
+					svg, err := Render(c)
+					if err != nil {
+						t.Fatal(err)
+					}
+					decoder := xml.NewDecoder(bytes.NewReader(svg))
+					found := false
+					for {
+						token, err := decoder.Token()
+						if err == io.EOF {
+							break
+						}
+						if err != nil {
+							t.Fatal(err)
+						}
+						start, ok := token.(xml.StartElement)
+						if !ok || start.Name.Local != "g" {
+							continue
+						}
+						for _, attribute := range start.Attr {
+							if attribute.Name.Local == "class" && attribute.Value == "buddy" {
+								var group struct {
+									Artwork string `xml:",innerxml"`
+								}
+								if err := decoder.DecodeElement(&group, &start); err != nil {
+									t.Fatal(err)
+								}
+								if previous, exists := seen[group.Artwork]; exists {
+									t.Fatalf("%s and %s have identical static character artwork", status, previous)
+								}
+								seen[group.Artwork] = status
+								found = true
+							}
+						}
+					}
+					if !found {
+						t.Fatal("character artwork missing")
+					}
+				}
+			})
+		}
+	}
+}

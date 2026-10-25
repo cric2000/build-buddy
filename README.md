@@ -174,7 +174,7 @@ This displays the specified status. It does not read GitHub Actions results.
 
 ### B. Publish from GitHub Actions
 
-Copy [the complete example](examples/github-actions.yml) to `.github/workflows/mascot.yml`. It works for this Go project; change the test/build commands if adapting it elsewhere. Change `main` in the push trigger if your default branch differs. The test job has read-only access; only the publication job gets `contents: write`. Repository/organization policies must allow that job to push to the dedicated **`badge-artifact`** branch. Reserve that branch for generated artwork.
+Copy [the complete example](examples/github-actions.yml) to `.github/workflows/mascot.yml`. It uses the included [test-result renderer](examples/render-test-result.sh) and [publication script](examples/publish-mascot.sh). Keep both scripts when adapting it elsewhere, and change the test/build commands as needed. Change `main` in the push trigger if your default branch differs. The test job has read-only access; only the publication job gets `contents: write`. Repository/organization policies must allow that job to push to the dedicated **`badge-artifact`** branch. Reserve that branch for generated artwork.
 
 The workflow builds the local renderer, runs tests, generates a passing or failing SVG, transfers it as a workflow artifact, then commits `mascot.svg` to the badge branch. Unchanged artwork creates no commit. Publication still runs after failing tests, and the workflow ultimately reports failure. Development branches are untouched. A compile/setup failure or cancellation cannot generate a fresh mascot and leaves the previous image in place.
 
@@ -213,7 +213,7 @@ go test ./internal/mascot -run '^$' -bench BenchmarkRender -benchmem
 go test ./internal/mascot -run '^$' -fuzz FuzzRender -fuzztime 10s
 ```
 
-Tests cover mood rules, all 45 character/status/theme combinations with and without animation, XML validity, injection attempts, Unicode and numeric boundaries, deterministic concurrent rendering, HTTP errors/caching/HEAD, CLI output, environment validation, live HTTP startup, and graceful shutdown. Server integration tests require loopback networking; race detection requires a supported platform and C toolchain. `.github/workflows/ci.yml` checks formatting, vet, tests, race detection, compilation, and a rendered SVG parsed with Python's standard library.
+Tests cover mood rules, all 45 character/status/theme combinations with and without animation, XML validity, injection attempts, Unicode and numeric boundaries, deterministic concurrent rendering, HTTP errors/caching/HEAD, CLI output, byte-for-byte API/CLI parity, environment validation, live HTTP startup, and graceful shutdown. A repeatable integration test runs genuinely passing and failing Go tests, invokes the exact rendering/publication scripts used by the workflow, then reads the published SVG through a separate Git checkout. It checks both status transitions, unchanged-image no-ops, and an untouched development branch. The publishing integration test needs Git and Bash. Server integration tests require loopback networking; race detection requires a supported platform and C toolchain. `.github/workflows/ci.yml` checks formatting, vet, tests, race detection, compilation, and a rendered SVG parsed with Python's standard library.
 
 ## Project layout
 
