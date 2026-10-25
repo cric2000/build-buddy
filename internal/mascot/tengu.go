@@ -1,68 +1,57 @@
 package mascot
 
-// Tengu is a mountain lookout: angular red face and nose, a small cap, broad
-// crow wings, knotted cord, high sandals, and a fan that changes with its task.
+import "math"
+
+// Tengu has a soft red face, cloudlike pale hair, a compact robe, small crow
+// wings, and a maple fan. Rounded sleeves and hakama give it a seated silhouette.
 func tengu(d *drawing, r Resolved) {
-	red, feather, robe, paper := "#ce624c", "#35434f", "#d6d2bb", "#edb36f"
-	if r.Theme == "dark" {
-		red, feather = "#e47c64", "#738492"
+	red, wing, vest, hair := "#dc786c", "#53657a", "#4d4c55", "#f9efd6"
+	if r.Theme == "dark" || r.Theme == "neon" {
+		red, wing, vest, hair = "#ed9589", "#8493a4", "#727280", "#fff4df"
 	}
-	if r.Theme == "neon" {
-		red, feather, robe, paper = "#ea8193", "#81739f", "#dad0df", "#e6ca8a"
+	d.add(`<g stroke="#56413a" stroke-width="2"><g data-part="crow-wings" fill="%s"><path d="M149 171 Q125 159 115 170 Q104 177 116 183 Q104 194 120 195 Q122 209 139 199 L159 186Z"/><path transform="translate(360 0) scale(-1 1)" d="M149 171 Q125 159 115 170 Q104 177 116 183 Q104 194 120 195 Q122 209 139 199 L159 186Z"/><path d="m119 183 19 3 m-16 10 17 -4 m102 -9 -19 3 m16 10 -17 -4" fill="none" stroke="#afbac5" stroke-width="1.2"/></g>`, wing)
+	d.add(`<path d="M157 195 Q140 208 149 224 Q160 234 179 226 Q198 234 212 224 Q222 208 202 195Z" fill="#9481a2"/><path d="m180 201 -1 24 M158 206 q-5 8 -1 16 m45 -16 q5 8 1 16" fill="none" stroke="#c0acc9" stroke-width="1.3"/><path d="M151 225 q12 -4 20 2 l-1 9 -24 0Z M189 227 q9 -6 20 -2 l5 11 -24 0Z" fill="#ac8d6b"/><path d="m150 231 17 0 m26 0 17 0" stroke="#f0dab1" stroke-width="1.5"/><path d="M153 161 Q180 151 207 162 L216 202 Q180 216 143 202Z" fill="#f0ddb4"/><path d="M154 161 173 176 168 205 144 201Z M205 162 188 176 193 205 216 201Z" fill="%s"/><path d="m173 175 7 14 9 -14 m-9 14 -1 17" fill="none" stroke="#a99474" stroke-width="1.4"/>`, vest)
+	d.add(`<path d="M154 165 Q132 165 130 188 L145 201 161 186 M206 165 Q228 165 230 188 L215 201 199 186" fill="#f0ddb4"/><path d="M137 187 q-6 0 -7 6 q1 7 9 7 l7 -8 M223 187 q6 0 7 6 q-1 7 -9 7 l-7 -8" fill="%s"/>`, red)
+	for _, pt := range [][2]int{{158, 174}, {169, 183}, {202, 174}, {191, 183}} {
+		d.add(`<circle cx="%d" cy="%d" r="4.2" fill="#fff7e5" stroke-width="1.1"/>`, pt[0], pt[1])
 	}
-	d.add(`<g stroke="#302f38" stroke-width="2.8"><path d="m162 210 -5 22 -11 1 -2 7 29 0 3 -28 M190 210 l3 22 20 1 3 7 -29 0 -9 -28" fill="#b9a07a"/><path d="m150 230 20 0 m23 0 16 0 m-56 10 0 4 m13 -4 0 4 m29 -4 0 4 m12 -4 0 4" fill="none" stroke-width="2"/>`)
-	// Wings change the entire outline rather than relying only on eye changes.
-	d.add(`<g data-part="crow-wings" fill="%s">`, feather)
+	x, y, fanAngle := 232, 183, -15
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M151 174 Q126 159 111 128 L103 133 101 114 Q86 124 90 148 Q92 166 119 192 L108 197 Q131 210 151 192 M207 173 Q231 149 243 117 L250 129 258 121 Q270 146 243 172 L252 176 Q240 196 216 195Z"/><path d="m103 143 26 31 m-17 -8 13 17 m119 -43 -20 31 m20 -15 -15 22" fill="none" stroke="#74848b" stroke-width="2"/>`)
+		x, y, fanAngle = 238, 158, 10
 	case "failing":
-		d.add(`<path d="M150 173 Q123 170 112 195 L102 207 115 207 110 217 Q140 220 154 194 M210 174 Q239 179 246 201 L257 213 243 211 246 221 Q219 221 205 196Z"/><path d="m121 199 19 -12 m93 15 -16 -16" fill="none" stroke="#74848b" stroke-width="2"/>`)
+		x, y, fanAngle = 231, 207, 110
 	case "running":
-		d.add(`<path d="M150 172 Q116 168 107 185 L98 195 110 197 104 204 Q130 216 155 193 M208 174 Q231 170 242 143 L255 136 252 154 263 150 Q262 183 219 195Z"/><path d="m113 191 25 -10 m105 -25 -20 24" fill="none" stroke="#74848b" stroke-width="2"/>`)
+		x, y, fanAngle = 220, 192, -45
 	case "queued":
-		d.add(`<path d="M150 172 Q128 179 130 211 L139 227 148 219 155 225 171 195 M205 173 Q230 183 224 211 L215 226 208 218 200 225 185 195Z"/><path d="m140 201 6 15 m68 -15 -6 15" fill="none" stroke="#74848b" stroke-width="2"/>`)
-	default:
-		d.add(`<path d="M150 173 Q121 170 108 155 L98 160 107 176 98 180 Q116 204 153 194 M208 173 Q236 159 234 140 L242 134 249 145 258 141 Q264 177 217 195Z"/><path d="m112 174 22 11 m111 -29 -18 23" fill="none" stroke="#74848b" stroke-width="2"/>`)
+		x, y, fanAngle = 180, 210, 75
 	}
-	d.add(`</g><path d="M154 161 204 161 212 218 Q182 233 145 217Z" fill="%s"/><path d="m158 166 21 30 20 -29 -4 43 -34 2Z" fill="#f5e7c5"/><path d="m180 196 -2 21 m-29 -2 57 0" fill="none" stroke="#9d9e91" stroke-width="2"/><path d="M149 166 Q176 184 207 165" fill="none" stroke="#bb8a51" stroke-width="5"/>`, robe)
-	for _, pt := range [][2]int{{154, 171}, {171, 178}, {190, 177}, {205, 170}} {
-		d.add(`<circle cx="%d" cy="%d" r="5" fill="#f1e7cb" stroke-width="1.8"/>`, pt[0], pt[1])
+	gripX := float64(x) - 12*math.Sin(float64(fanAngle)*math.Pi/180)
+	gripY := float64(y) + 12*math.Cos(float64(fanAngle)*math.Pi/180)
+	if r.Status != "queued" {
+		d.add(`<path d="M223 193 Q238 191 %.1f %.1f" fill="none" stroke="%s" stroke-width="7"/><ellipse cx="%.1f" cy="%.1f" rx="4" ry="4.5" fill="%s"/>`, gripX, gripY, red, gripX, gripY, red)
 	}
-	// Each fan pose has a distinct job: triumphant, drooping, checking, tucked, inspecting.
-	x, y, angle := 229, 184, -25
-	switch r.Status {
-	case "passing":
-		x, y, angle = 244, 143, 18
-	case "failing":
-		x, y, angle = 222, 213, 135
-	case "running":
-		x, y, angle = 139, 193, -65
-	case "queued":
-		x, y, angle = 181, 205, 80
-	}
-	d.add(`<g data-part="maple-fan" transform="translate(%d %d) rotate(%d)"><path d="M0 14 V-4" fill="none" stroke="#a88058" stroke-width="5"/><path d="M0 1 Q-17 -2 -21 -15 L-11 -13 -13 -27 -3 -20 1 -35 7 -21 18 -28 15 -14 25 -16 Q20 -1 0 1Z" fill="%s"/><path d="M0 0 1 -25 M0 -1 -13 -16 M1 -2 16 -17" fill="none" stroke="#9a5749" stroke-width="1.6"/></g>`, x, y, angle, paper)
-	angle = map[string]int{"passing": -8, "failing": 7, "running": 5, "queued": 13, "unknown": -12}[r.Status]
-	d.add(`<g transform="rotate(%d 178 131)"><path d="M132 136 119 142 125 125 115 123 130 110 125 101 145 98 150 83 166 90 181 76 192 89 212 84 214 101 235 106 226 118 237 132 224 137 229 151 208 156 146 159Z" fill="%s"/><path d="M137 115 Q143 93 178 96 Q211 97 218 120 L213 150 Q207 174 179 179 Q148 172 140 150Z" fill="%s"/><path d="m144 156 13 4 -3 11 14 -5 10 13 9 -12 15 5 -2 -13 14 -5 -4 18 -18 10 -22 0 -23 -15Z" fill="%s" stroke="none"/><path d="M149 101 Q177 89 207 104" fill="none" stroke="#f1a17b" stroke-width="2"/>`, angle, feather, red, feather)
+	d.add(`<g data-part="maple-fan" transform="translate(%d %d) rotate(%d)"><path d="M0 13 V-2" stroke="#a17a52" stroke-width="4"/><path d="M0 1 Q-17 -2 -19 -14 L-10 -12 -11 -24 -3 -18 1 -31 7 -19 17 -24 14 -12 23 -14 Q19 -1 0 1Z" fill="#e5a56f"/><path d="M0 0 1 -23 M0 -1 -11 -14 M1 -2 14 -15" fill="none" stroke="#ad6a4f" stroke-width="1.1"/></g>`, x, y, fanAngle)
+	angle := map[string]int{"passing": -4, "failing": 3, "running": 0, "queued": 7, "unknown": -6}[r.Status]
+	d.add(`<g transform="rotate(%d 180 130)"><path d="M137 111 Q122 104 130 94 Q125 85 144 84 Q149 73 168 78 Q183 72 196 79 Q218 76 222 88 Q240 90 230 105 Q243 117 230 130 Q242 145 223 152 Q222 166 204 160 L155 160 Q137 167 137 152 Q117 143 128 129 Q115 119 137 111Z" fill="%s"/><ellipse cx="144" cy="130" rx="7" ry="10" fill="%s"/><ellipse cx="216" cy="130" rx="7" ry="10" fill="%s"/><path d="M145 119 Q147 94 180 94 Q213 95 215 121 L213 143 Q208 167 180 174 Q151 167 147 145Z" fill="%s"/>`, angle, hair, red, red, red)
 	tenguFace(d, r, red)
-	// The long nose is drawn after the eyes to maintain a clear three-quarter face.
-	d.add(`<g data-part="long-nose"><path d="M174 136 Q185 128 194 135 L225 141 Q233 144 227 149 L190 149 Q179 153 174 146Z" fill="%s"/><path d="m192 140 28 4" fill="none" stroke="#f4ac84" stroke-width="2"/><path d="m177 155 q9 4 16 -1" fill="none" stroke-width="2"/></g><g data-part="mountain-cap"><path d="m162 95 3 -20 25 -3 9 19 -19 9Z" fill="#41424c"/><path d="m165 75 13 10 12 -13 M178 85 l2 15" fill="none" stroke="#d3b077" stroke-width="1.8"/><path d="m166 95 -11 14 m39 -15 13 14" fill="none" stroke="#bb8a51" stroke-width="2"/></g></g></g>`, red)
+	d.add(`<g data-part="long-nose"><path d="M177 139 Q185 132 193 138 L223 141 Q233 142 229 148 Q226 153 192 150 Q182 153 177 147Z" fill="%s"/><path d="m192 141 27 3" stroke="#ffd0ad" stroke-width="1.4"/></g><g data-part="mountain-cap"><path d="m166 92 2 -17 23 -1 6 18 -16 6Z" fill="%s"/><path d="m169 76 10 8 11 -9 m-11 9 2 13" fill="none" stroke="#d4b888" stroke-width="1.1"/></g></g></g>`, red, vest)
 }
 
 func tenguFace(d *drawing, r Resolved, red string) {
-	d.add(`<g data-part="tengu-expression">`)
-	expressiveEyes(d, r, eyeStyle{left: 153, right: 196, y: 125, width: 9.5, height: 11.5, ink: "#302f38", brow: "#302f38", iris: "#8b5264", light: "#e6a6b5", lid: red})
+	d.add(`<g data-part="tengu-expression"><ellipse cx="153" cy="148" rx="4" ry="2.4" fill="#f4baa8" stroke="none"/>`)
+	expressiveEyes(d, r, eyeStyle{left: 159, right: 195, y: 128, width: 7.5, height: 10, ink: "#3b2829", brow: "#71443f", iris: "#713746", light: "#d895a0", lid: red})
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M160 158 Q170 174 182 158" fill="#382f39"/><path d="m167 163 9 0" stroke="#e6b799" stroke-width="2"/>`)
+		d.add(`<path d="M165 156 q8 8 16 0" fill="none" stroke-width="1.7"/>`)
 	case "failing":
-		d.add(`<path d="m159 165 q10 -10 21 -3" fill="none" stroke-width="2.5"/>`)
+		d.add(`<path d="M165 161 q8 -7 16 -1" fill="none" stroke-width="1.6"/>`)
 	case "running":
-		d.add(`<path d="m161 163 18 0" fill="none" stroke-width="2"/>`)
+		d.add(`<path d="m168 158 11 0" fill="none" stroke-width="1.6"/>`)
 	case "queued":
-		d.add(`<ellipse cx="170" cy="162" rx="4" ry="5" fill="#382f39" stroke="none"/>`)
+		d.add(`<ellipse cx="173" cy="158" rx="2.5" ry="3" fill="#71443f" stroke="none"/>`)
 	default:
-		d.add(`<path d="M163 164 q8 -5 14 -1" fill="none" stroke-width="2"/>`)
+		d.add(`<path d="M169 159 q5 -4 10 -1" fill="none" stroke-width="1.5"/>`)
 	}
 	d.add(`</g>`)
 }

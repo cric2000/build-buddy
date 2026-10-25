@@ -16,10 +16,10 @@ type Character struct {
 
 func Characters() []Character {
 	return []Character{
-		{"kappa", "A river tinkerer with a water dish, a patched shell, and a cucumber pencil."},
-		{"tanuki", "A leaf-capped woodland courier with an oversized tail and a lucky satchel."},
-		{"tengu", "A mountain lookout with a long red nose, feathered wings, and a maple fan."},
-		{"kurama", "Naruto's nine-tailed fox, with orange fur, dark eye markings, and a formidable tail fan."},
+		{"kappa", "A round river companion with a leaf crown, glossy button eyes, and orange webbed feet."},
+		{"tanuki", "A leaf-capped woodland companion with little folded paws, a cream belly, and a striped tail."},
+		{"tengu", "A soft-haired mountain companion with a long red nose, little crow wings, and a maple fan."},
+		{"kurama", "Naruto's seated nine-tailed fox, with broad tails, red slit-pupil eyes, and dark ear-to-eye markings."},
 		{"chopper", "One Piece's little reindeer doctor, with antlers, a blue nose, and a pink cross-marked hat."},
 	}
 }

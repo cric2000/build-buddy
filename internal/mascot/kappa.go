@@ -1,69 +1,54 @@
 package mascot
 
-// Kappa is a river mechanic: webbed feet, a repaired turtle shell, a water dish,
-// and a cucumber sharpened into a carpenter's pencil. Its poses work without CSS.
+// Kappa is a round seated river creature, with a leaf crown, water dish,
+// tucked flippers, a cream belly, and broad orange webbed feet.
 func kappa(d *drawing, r Resolved) {
-	skin, shade, water, scarf := "#91b866", "#537e50", "#83d9dc", "#dc8650"
-	if r.Theme == "dark" {
-		skin, shade = "#a4c77a", "#78985e"
+	skin, shadow, leaf, water := "#87d996", "#53ae72", "#398952", "#65cde4"
+	if r.Theme == "dark" || r.Theme == "neon" {
+		skin, shadow, leaf, water = "#a0e8aa", "#68bc87", "#4b9c66", "#7ee4ed"
 	}
-	if r.Theme == "neon" {
-		skin, shade, water, scarf = "#a3d998", "#397c70", "#83f5e8", "#f29fbc"
-	}
-	d.add(`<g stroke="#283e35" stroke-width="2.8"><g data-part="shell"><path d="M197 157 C242 139 260 177 242 214 Q228 237 201 219Z" fill="%s"/><path d="M206 163 Q241 152 243 184 Q247 212 218 222" fill="none" stroke="#b6c58a"/><path d="m219 163 11 16 -4 23 -17 9 m21 -32 13 -1 m-17 24 13 9" fill="none" stroke="#354f39" stroke-width="2"/><path d="m232 193 9 4 -3 10 -10 -4Z" fill="#e9c78f"/><path d="m233 196 5 2 m-6 2 5 2" stroke-width="1.4"/></g>`, shade)
-	// Broad toes and an asymmetric stance give the small-size silhouette weight.
-	if r.Status == "passing" {
-		d.add(`<path d="M154 214 136 227 124 222 l3 13 37 -1 12 -13 M198 215 213 226 226 221 l6 13 -36 1 -10 -14" fill="%s"/>`, skin)
-	} else {
-		d.add(`<path d="M152 216 143 228 129 230 l5 8 34 -1 7 -16 M193 218 199 235 l32 1 -5 -8 -14 -1 -6 -14" fill="%s"/>`, skin)
-	}
-	d.add(`<path d="M147 174 Q169 159 199 172 Q220 188 211 216 Q186 234 150 219 Q134 201 147 174Z" fill="%s"/><path d="M163 180 Q184 173 197 187 L199 216 Q182 225 160 214 Q151 196 163 180Z" fill="#e2d59e" stroke-width="2"/><path d="m163 196 31 0 m-29 9 29 0" fill="none" stroke="#bdba85" stroke-width="1.5"/><path d="m144 173 q31 15 63 -1 l-3 12 q-28 13 -57 -2Z" fill="%s"/><path d="m200 182 19 11 -15 4 -5 14 -9 -28" fill="%s"/><path d="m205 192 6 4" stroke="#f7c584"/>`, skin, scarf, scarf)
-	// Hands carry the story: celebrating, protecting the dish, working, or dozing.
+	d.add(`<defs><radialGradient id="kappa-skin" cx=".38" cy=".32" r=".8"><stop stop-color="%s"/><stop offset="1" stop-color="%s"/></radialGradient><linearGradient id="kappa-belly" x2="0" y2="1"><stop stop-color="#fff0c8"/><stop offset="1" stop-color="#e6be85"/></linearGradient></defs>`, skin, shadow)
+	d.add(`<g stroke="#234c35" stroke-width="2.2"><g data-part="shell"><ellipse cx="180" cy="180" rx="64" ry="57" fill="#a87944"/><ellipse cx="180" cy="182" rx="59" ry="55" fill="#f0cb8e"/><path d="M125 170 Q115 191 126 215 M235 170 Q245 191 234 215" fill="none" stroke="#805d38" stroke-width="1.4"/></g>`)
+	d.add(`<path d="M145 145 Q180 130 215 145 C239 164 241 199 230 219 Q211 237 180 236 Q148 237 130 219 C119 196 121 164 145 145Z" fill="url(#kappa-skin)"/><path d="M159 151 Q180 142 201 151 Q218 181 214 217 Q183 233 146 217 Q143 184 159 151Z" fill="url(#kappa-belly)"/><path d="M155 169 Q180 180 207 169 M150 186 Q180 198 212 186 M148 204 Q180 217 213 204" fill="none" stroke="#b99767" stroke-width="1.2"/>`)
+	// Large soft webbing sits in front of the shell and belly.
+	d.add(`<g data-part="webbed-feet" fill="#e9a45c" stroke="#795d37"><path d="M158 219 Q153 208 143 204 L140 215 Q129 201 127 207 L129 222 Q116 213 114 219 Q123 237 144 238 Q160 237 158 219Z"/><path transform="translate(360 0) scale(-1 1)" d="M158 219 Q153 208 143 204 L140 215 Q129 201 127 207 L129 222 Q116 213 114 219 Q123 237 144 238 Q160 237 158 219Z"/><path d="M137 219 q8 1 13 9 M223 219 q-8 1 -13 9" fill="none" stroke="#f9cf8b" stroke-width="2"/></g>`)
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M146 183 Q119 174 111 147 L101 140 Q96 133 102 131 L111 135 108 123 Q110 117 115 123 L122 139 Q133 148 155 166 M208 183 Q227 180 239 164" fill="%s"/><path d="m113 142 8 -4" fill="none"/>`, skin)
-		cucumber(d, 241, 155, -23)
+		d.add(`<path d="M146 157 Q125 162 123 146 Q117 134 111 139 Q108 151 114 166 Q124 182 147 181 M213 157 Q228 170 220 193 Q216 204 200 201 Q194 199 200 190 L204 174" fill="url(#kappa-skin)"/>`)
 	case "failing":
-		d.add(`<path d="M148 185 Q124 175 129 135 L135 117 Q140 113 142 120 L140 139 146 130 Q152 130 150 138 L144 153 159 170 M207 182 Q236 165 225 126 L218 115 Q212 113 212 121 L216 139 210 131 Q205 133 208 140 L215 153 198 168" fill="%s"/>`, skin)
+		d.add(`<path d="M146 157 Q126 162 133 191 L159 201 Q166 197 159 190 L147 180 M214 157 Q234 162 227 191 L201 201 Q194 197 201 190 L213 180" fill="url(#kappa-skin)"/>`)
 	case "running":
-		// A tiny work ledger and cucumber pencil replace generic code symbols.
-		d.add(`<path d="m138 190 55 -4 5 38 -55 4Z" fill="#f5e8bf"/><path d="m148 200 21 -2 m-20 10 30 -3 m-29 12 15 -1" stroke="#829477" stroke-width="2"/><path d="M145 180 Q122 184 135 208 L148 211 Q156 209 151 202 L144 197 M208 181 Q226 191 208 207 L193 204 Q189 198 197 197 L203 194" fill="%s"/>`, skin)
-		cucumber(d, 191, 189, 33)
+		d.add(`<path d="M146 157 Q124 180 139 201 Q149 207 169 201 L164 189 151 188 M214 157 Q236 180 221 201 Q211 207 191 201 L196 189 209 188" fill="url(#kappa-skin)"/><path d="m172 196 6 3 11 -9" fill="none" stroke="#568258" stroke-width="2"/>`)
 	case "queued":
-		d.add(`<path d="M145 184 Q123 202 149 220 L169 219 Q176 213 168 209 L153 207 M210 183 Q229 204 208 218 L180 220 Q173 214 181 209 L201 207" fill="%s"/>`, skin)
-		cucumber(d, 178, 216, 85)
+		d.add(`<path d="M146 157 Q128 176 143 196 Q160 208 180 201 Q185 197 178 193 L155 186 M214 157 Q232 176 217 196 Q204 207 183 204 Q177 201 183 196 L205 187" fill="url(#kappa-skin)"/>`)
 	default:
-		d.add(`<path d="M146 182 Q124 185 128 206 L145 212 Q153 208 145 203 L140 200 M210 182 Q233 178 225 151 L216 145 Q207 149 216 155 L214 167 201 170" fill="%s"/>`, skin)
+		d.add(`<path d="M146 157 Q128 171 137 190 Q144 204 160 202 Q169 202 165 194 L153 175 M214 157 Q232 171 223 190 Q216 204 200 202 Q191 202 195 194 L207 175" fill="url(#kappa-skin)"/>`)
 	}
-	angle := map[string]int{"passing": -6, "failing": -3, "running": 5, "queued": 9, "unknown": -10}[r.Status]
-	d.add(`<g transform="rotate(%d 180 142)"><path d="m130 124 -12 -11 14 -5 -3 -13 17 3 8 -18 16 10 14 -15 14 12 18 -7 6 15 18 0 -2 15 14 9 -16 13Z" fill="#365942"/><path d="M129 126 Q129 100 155 99 L207 101 Q233 104 234 132 L230 154 Q222 178 182 179 Q143 178 132 159Z" fill="%s"/><path d="M139 139 Q145 116 166 122 Q177 124 180 134 Q189 119 207 126 Q225 131 223 149 Q219 165 203 164 L154 162 Q138 158 139 139Z" fill="#e9e4b8" stroke="none"/><path d="m133 119 12 7 -3 -12 17 7 -1 -15 16 12 9 -12 12 13 14 -8 1 14 14 -3" fill="#365942" stroke="none"/>`, angle, skin)
-	// The water remains visible in every mood; a failing build spills it.
-	d.add(`<g data-part="water-dish"><path d="M151 94 Q180 106 210 94 L204 107 Q180 117 156 106Z" fill="#d8ce9c"/><ellipse cx="181" cy="94" rx="30" ry="9" fill="%s"/><path d="M160 94 Q171 89 183 93 T202 94" fill="none" stroke="#e0ffff" stroke-width="2"/></g>`, water)
+	angle := map[string]int{"passing": -3, "failing": 3, "running": 0, "queued": 7, "unknown": -5}[r.Status]
+	d.add(`<g transform="rotate(%d 180 129)"><path d="M121 124 C121 97 143 86 180 87 C218 86 240 98 240 125 Q241 167 180 173 Q119 168 121 124Z" fill="url(#kappa-skin)"/><ellipse cx="174" cy="119" rx="35" ry="24" fill="#d1ffd0" fill-opacity=".18" stroke="none"/>`, angle)
+	// Rounded crown leaves replace the old serrated outline.
+	d.add(`<g data-part="leaf-crown" fill="%s"><path d="M150 91 Q134 82 126 99 Q142 104 157 96Z"/><path d="M153 94 Q135 106 145 119 Q162 114 166 98Z"/><path d="M165 96 Q162 115 180 124 Q198 114 195 96Z"/><path d="M207 94 Q225 106 215 119 Q198 114 194 98Z"/><path d="M210 91 Q226 82 234 99 Q218 104 203 96Z"/></g>`, leaf)
+	d.add(`<g data-part="water-dish"><path d="M144 89 Q180 101 216 89 L210 99 Q180 110 150 99Z" fill="#c3d795"/><ellipse cx="180" cy="89" rx="35" ry="9" fill="%s"/><path d="M151 89 Q166 84 183 88 T206 88" fill="none" stroke="#efffff" stroke-width="1.7"/><ellipse cx="195" cy="86" rx="5" ry="1.5" fill="#efffff" stroke="none"/></g>`, water)
 	if r.Status == "failing" {
-		d.add(`<path d="M209 95 q15 -9 18 1 m-13 -7 5 -8" fill="none" stroke="%s"/><path d="M233 106 q-8 10 0 12 q8 -2 0 -12Z" fill="%s" stroke-width="1.8"/>`, water, water)
+		d.add(`<path d="m213 90 q11 -6 15 2 M229 101 q-5 8 0 10 q5 -2 0 -10Z" fill="%s" stroke="%s" stroke-width="1.2"/>`, water, water)
 	}
-	kappaFace(d, r)
-	d.add(`<path d="m139 153 4 1 m-2 6 4 -1 m69 -5 4 -2 m-3 7 4 -1" stroke="#72935c" stroke-width="2"/></g></g>`)
+	d.add(`<g data-part="blossom" transform="translate(127 111)" fill="#dc96c8" stroke="#694a64" stroke-width="1"><ellipse cy="-5" rx="3.5" ry="5"/><ellipse cx="5" cy="-1" rx="5" ry="3.5"/><ellipse cx="3" cy="5" rx="3.5" ry="5" transform="rotate(-20 3 5)"/><ellipse cx="-3" cy="5" rx="3.5" ry="5" transform="rotate(20 -3 5)"/><ellipse cx="-5" cy="-1" rx="5" ry="3.5"/><circle r="3" fill="#f5d675"/></g>`)
+	kappaFace(d, r, skin)
+	d.add(`</g></g>`)
 }
 
-func cucumber(d *drawing, x, y, angle int) {
-	d.add(`<g data-part="cucumber-pencil" transform="translate(%d %d) rotate(%d)"><path d="M-5 15 -6 -17 Q0 -25 6 -17 L5 15 0 24Z" fill="#426d43"/><path d="m-2 -16 1 29" stroke="#b8ce79" stroke-width="2"/><path d="m-5 15 10 0 -5 9Z" fill="#f2d39a"/><path d="m-1 21 1 3 1 -3" fill="#283e35" stroke-width="1"/></g>`, x, y, angle)
-}
-
-func kappaFace(d *drawing, r Resolved) {
-	d.add(`<g data-part="kappa-expression">`)
-	expressiveEyes(d, r, eyeStyle{left: 157, right: 203, y: 139, width: 11, height: 13, ink: "#283e35", brow: "#283e35", iris: "#527d55", light: "#b8dda0", lid: "#e9e4b8"})
+func kappaFace(d *drawing, r Resolved, skin string) {
+	d.add(`<g data-part="kappa-expression"><ellipse cx="143" cy="148" rx="6" ry="2.8" fill="#f2b3c6" stroke="#527556" stroke-width="1"/><ellipse cx="217" cy="148" rx="6" ry="2.8" fill="#f2b3c6" stroke="#527556" stroke-width="1"/>`)
+	expressiveEyes(d, r, eyeStyle{left: 155, right: 205, y: 134, width: 8, height: 9, ink: "#12271f", brow: "#315c40", light: "#789888", lid: skin, shape: "button"})
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M166 154 Q181 148 198 154 L191 165 Q180 175 170 164Z" fill="#c59348"/><path d="m172 158 q9 5 19 0" fill="none" stroke-width="2"/>`)
+		d.add(`<path d="M163 151 180 142 197 151 181 162Z" fill="#e9a16a" stroke="#775b3d" stroke-width="1.6"/><path d="M164 152 Q180 163 196 152" fill="none" stroke="#986244" stroke-width="1.2"/>`)
 	case "failing":
-		d.add(`<path d="M166 159 Q180 149 196 159 L190 166 Q180 162 171 166Z" fill="#c59348"/><path d="m174 162 q7 -4 14 0" fill="none" stroke-width="1.5"/>`)
-	case "running":
-		d.add(`<path d="M165 156 Q181 150 197 155 L191 163 170 165Z" fill="#c59348"/><path d="m174 159 15 -1" fill="none" stroke-width="2"/>`)
+		d.add(`<path d="M164 154 180 145 196 154 181 163Z" fill="#e9a16a" stroke="#775b3d" stroke-width="1.6"/><path d="M169 157 Q180 152 191 157" fill="none" stroke="#986244" stroke-width="1.2"/>`)
 	case "queued":
-		d.add(`<path d="M166 156 Q181 148 197 156 L190 163 172 163Z" fill="#c59348"/><ellipse cx="182" cy="160" rx="4" ry="3" fill="#283e35" stroke="none"/>`)
+		d.add(`<path d="M164 152 180 143 196 152 181 161Z" fill="#e9a16a" stroke="#775b3d" stroke-width="1.6"/><ellipse cx="181" cy="156" rx="3" ry="2" fill="#775b3d" stroke="none"/>`)
 	default:
-		d.add(`<path d="M166 158 Q181 151 198 156 L188 164 173 165Z" fill="#c59348"/><path d="m178 160 9 0" stroke-width="1.5"/>`)
+		d.add(`<path d="M164 152 180 143 196 152 181 161Z" fill="#e9a16a" stroke="#775b3d" stroke-width="1.6"/><path d="m166 153 28 0" stroke="#986244" stroke-width="1.2"/>`)
 	}
 	d.add(`</g>`)
 }

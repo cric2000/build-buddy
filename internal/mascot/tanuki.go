@@ -1,63 +1,48 @@
 package mascot
 
-// Tanuki is a woodland courier. Its broad tail, dark eye mask, leaf cap, and
-// overstuffed satchel distinguish it from the upright river and mountain folk.
+// Tanuki is built from a large round head, little folded paws, a cream belly,
+// and one soft striped tail. Its leaf cap keeps a woodland identity.
 func tanuki(d *drawing, r Resolved) {
-	fur, dark, cream, leaf, cloth := "#b88758", "#514337", "#f1dbaf", "#729353", "#7f999c"
-	if r.Theme == "dark" {
-		fur, dark, leaf = "#c99b6d", "#68584b", "#91ab6d"
+	fur, shade, cream, mask := "#bf955b", "#997040", "#f8dfaf", "#765333"
+	if r.Theme == "dark" || r.Theme == "neon" {
+		fur, shade, cream, mask = "#d5ae74", "#ae8955", "#ffe8bc", "#896747"
 	}
-	if r.Theme == "neon" {
-		fur, dark, cream, leaf, cloth = "#cba47a", "#65566f", "#f8e0bb", "#93c293", "#a391bf"
-	}
-	d.add(`<g stroke="#382f2b" stroke-width="2.8"><g data-part="brush-tail"`)
-	if r.Status == "passing" {
-		d.add(` transform="rotate(-16 213 211)"`)
-	} else if r.Status == "failing" {
-		d.add(` transform="rotate(9 213 211)"`)
-	}
-	d.add(`><path d="M204 212 C226 234 272 222 270 183 Q269 160 251 159 Q257 177 241 181 Q224 181 213 193Z" fill="%s"/><path d="M249 160 Q270 157 270 183 Q270 201 260 211 Q263 193 247 187 Q238 184 233 187 L241 181 Q257 177 249 160Z" fill="%s" stroke="none"/><path d="M226 189 Q245 188 252 200 M223 200 Q235 201 239 212" fill="none" stroke="%s" stroke-width="7"/></g>`, fur, dark, dark)
-	if r.Status == "queued" {
-		d.add(`<path d="M143 215 Q120 220 127 233 L158 235 166 221 M196 220 Q213 215 225 231 Q223 238 198 237 L184 224" fill="%s"/>`, dark)
-	} else {
-		d.add(`<path d="m148 214 -12 16 q-1 7 25 5 l12 -16 M191 217 l8 18 q24 5 26 -2 l-15 -19" fill="%s"/>`, dark)
-	}
-	d.add(`<path d="M148 160 Q122 180 131 213 Q137 233 175 231 Q218 233 228 211 Q232 179 211 162Z" fill="%s"/><path d="M159 169 Q179 155 200 173 Q216 191 207 218 Q174 233 146 213 Q143 186 159 169Z" fill="%s" stroke="none"/><path d="m149 221 4 3 m8 -1 5 2 m29 -3 5 -3" fill="none" stroke="#c6aa7d" stroke-width="1.5"/>`, fur, cream)
-	// A stitched cross-body bag is part of the courier's silhouette in every pose.
-	d.add(`<path d="M147 162 Q169 187 210 203" fill="none" stroke="#775846" stroke-width="9"/><path d="M147 162 Q169 187 210 203" fill="none" stroke="#dab27c" stroke-width="3"/><g data-part="satchel"><path d="m193 194 29 -1 9 28 q-17 13 -39 4Z" fill="%s"/><path d="m193 194 29 -1 4 12 -16 7 -16 -6Z" fill="#b6b8a0"/><path d="m199 219 4 2 m7 1 4 -1 m7 -3 3 -2" fill="none" stroke="#e8d5ad" stroke-width="1.5"/><rect x="207" y="204" width="6" height="8" rx="2" fill="#e7bd69"/></g>`, cloth)
+	tail := `M204 209 C231 234 266 225 271 199 Q277 169 255 167 Q245 170 251 181 Q247 192 233 188 Q213 187 204 209Z`
+	d.add(`<defs><clipPath id="tanuki-tail-cutout"><path d="%s"/></clipPath></defs><g stroke="#57412b" stroke-width="2"><g data-part="brush-tail"><path d="%s" fill="%s"/><g clip-path="url(#tanuki-tail-cutout)" fill="none" stroke="%s" stroke-width="13"><path d="M240 184 Q254 199 248 223 M222 194 Q233 205 227 226"/></g></g>`, tail, tail, fur, mask)
+	d.add(`<path d="M151 161 Q180 150 208 163 Q231 181 220 214 Q210 233 180 233 Q147 233 138 214 Q128 182 151 161Z" fill="%s"/><ellipse cx="179" cy="198" rx="32" ry="30" fill="%s" stroke="none"/><ellipse cx="150" cy="223" rx="21" ry="13" transform="rotate(-15 150 223)" fill="%s"/><ellipse cx="210" cy="223" rx="21" ry="13" transform="rotate(15 210 223)" fill="%s"/><ellipse cx="150" cy="227" rx="7" ry="4" fill="%s" stroke="none"/><ellipse cx="210" cy="227" rx="7" ry="4" fill="%s" stroke="none"/>`, fur, cream, fur, fur, cream, cream)
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M145 177 Q124 170 112 150 L100 149 Q95 145 101 141 L110 142 108 132 Q112 126 116 133 L123 145 155 159" fill="%s"/><path d="M212 172 Q233 170 239 148 L249 143 Q256 142 254 149 L248 156 Q246 181 219 191" fill="%s"/>`, fur, fur)
+		d.add(`<path d="M146 173 Q125 171 119 156 Q112 147 109 156 Q109 180 139 192 M211 173 Q227 179 218 196 Q209 206 194 199 L201 186" fill="%s"/>`, fur)
 	case "failing":
-		d.add(`<path d="M145 176 Q122 168 134 148 L145 142 Q155 144 150 151 L144 155 157 161 M213 173 Q232 163 218 146 L210 140 Q203 142 207 149 L213 155 200 163" fill="%s"/>`, fur)
+		d.add(`<path d="M146 174 Q128 185 143 201 L168 209 l5 -8 -22 -12 M211 174 Q229 185 214 201 L189 209 l-5 -8 22 -12" fill="%s"/>`, fur)
 	case "running":
-		d.add(`<g data-part="delivery-scroll" transform="rotate(-8 168 195)"><path d="m138 181 56 0 0 36 -55 0Z" fill="#fff0c8"/><path d="M136 181 q-8 0 -8 7 q0 7 11 7 v22 M194 217 q9 0 9 -7 q0 -7 -9 -7" fill="#e3c493"/><path d="m148 191 31 0 m-31 7 17 0 m-17 7 25 0" stroke="#b39870" stroke-width="2"/><path d="m180 204 4 4 8 -10" fill="none" stroke="#5e8054"/></g><path d="M144 172 Q125 183 140 199 L151 197 Q154 192 146 190 M212 171 Q227 187 208 202 L195 198 Q192 190 201 191 L204 185" fill="%s"/>`, fur)
+		d.add(`<path d="M146 174 Q132 184 141 199 Q153 208 169 199 L164 190 151 189 M211 174 Q225 184 216 199 Q204 208 188 199 L193 190 206 189" fill="%s"/><path d="m174 201 5 4 9 -10" fill="none" stroke="#7d8b57" stroke-width="1.8"/>`, fur)
 	case "queued":
-		d.add(`<path d="M142 174 Q125 198 151 210 L175 204 Q179 197 171 196 L153 195 M212 174 Q231 195 207 209 L177 211 Q170 205 179 201 L201 197" fill="%s"/><path d="M173 208 Q189 211 206 205" fill="none" stroke="#e6c797" stroke-width="2"/>`, fur)
+		d.add(`<path d="M146 174 Q131 192 149 204 L179 208 l4 -8 -25 -11 M211 174 Q226 192 208 204 L180 208 l-4 -8 24 -11" fill="%s"/>`, fur)
 	default:
-		d.add(`<path d="M144 174 Q123 187 136 206 L150 210 Q157 204 148 201 L145 196 M211 173 Q235 164 227 145 L215 142 Q209 146 218 152 L212 160 201 162" fill="%s"/>`, fur)
+		d.add(`<path d="M146 174 Q132 185 142 199 L159 207 Q169 205 165 197 L152 186 M211 174 Q225 185 215 199 L198 207 Q188 205 192 197 L205 186" fill="%s"/>`, fur)
 	}
-	angle := map[string]int{"passing": 7, "failing": -5, "running": 3, "queued": -11, "unknown": 12}[r.Status]
-	d.add(`<g transform="rotate(%d 178 134)"><path d="M131 114 Q107 90 119 77 Q142 69 155 100 M197 99 Q216 73 235 83 Q249 100 224 119" fill="%s"/><path d="M130 99 Q119 84 123 84 Q134 81 143 101 M209 102 Q225 85 229 91 Q236 98 222 108" fill="#c8aa85" stroke="none"/><path d="M126 122 Q124 99 155 96 Q180 85 207 100 Q231 104 234 133 L241 146 230 148 233 158 221 159 Q209 181 178 181 Q144 180 130 160 L119 157 125 149 116 143Z" fill="%s"/><path d="M134 133 Q151 115 173 132 L182 140 192 129 Q215 118 226 139 L225 155 Q205 170 188 155 L178 146 Q159 170 136 155Z" fill="%s" stroke="none"/><path d="M157 154 Q179 138 202 155 Q214 165 201 174 Q178 186 154 172 Q143 163 157 154Z" fill="%s" stroke="none"/>`, angle, dark, fur, dark, cream)
-	tanukiFace(d, r, cream, dark)
-	// The leaf has an asymmetric bite and a bent stem, rather than a stock icon.
-	d.add(`<g data-part="leaf-cap"><path d="M155 103 Q145 81 164 67 Q180 61 203 65 L199 73 209 76 Q206 95 180 103Z" fill="%s"/><path d="M159 101 Q178 87 193 73 M176 87 166 80 M180 83 195 84" fill="none" stroke="#425e3b" stroke-width="1.8"/><path d="M157 104 q-7 3 -12 0" fill="none" stroke-width="3"/></g></g></g>`, leaf)
+	angle := map[string]int{"passing": -3, "failing": 3, "running": 0, "queued": 7, "unknown": -6}[r.Status]
+	d.add(`<g transform="rotate(%d 180 133)"><circle cx="139" cy="98" r="16" fill="%s"/><circle cx="221" cy="98" r="16" fill="%s"/><circle cx="139" cy="98" r="9" fill="%s" stroke="none"/><circle cx="221" cy="98" r="9" fill="%s" stroke="none"/><path d="M126 125 Q125 99 151 94 Q177 83 208 96 Q235 102 234 127 Q245 147 229 160 Q213 178 180 178 Q145 178 130 160 Q116 148 126 125Z" fill="%s"/><path d="M135 132 Q148 116 166 126 Q180 135 194 126 Q213 116 225 133 L225 149 Q213 161 194 151 L180 146 166 153 Q147 162 135 149Z" fill="%s" stroke="none"/><ellipse cx="180" cy="158" rx="22" ry="16" fill="%s" stroke="none"/>`, angle, shade, shade, cream, cream, fur, mask, cream)
+	tanukiFace(d, r, cream, mask)
+	d.add(`<g data-part="leaf-cap"><path d="M162 97 Q151 82 167 73 Q183 66 202 73 Q200 93 179 98Z" fill="#79a563"/><path d="M163 97 Q177 85 191 77 M177 86 171 79 m7 7 12 2" fill="none" stroke="#487447" stroke-width="1.3"/><path d="m162 97 -6 3" fill="none" stroke="#487447" stroke-width="2"/></g></g></g>`)
 }
 
-func tanukiFace(d *drawing, r Resolved, cream, dark string) {
-	d.add(`<g data-part="tanuki-expression" stroke="%s">`, dark)
-	expressiveEyes(d, r, eyeStyle{left: 153, right: 204, y: 141, width: 11.5, height: 13, ink: "#382f2b", brow: cream, iris: "#80613e", light: "#e2bd75", lid: dark})
+func tanukiFace(d *drawing, r Resolved, cream, mask string) {
+	d.add(`<g data-part="tanuki-expression">`)
+	expressiveEyes(d, r, eyeStyle{left: 154, right: 206, y: 138, width: 8.5, height: 10, ink: "#30251a", brow: cream, light: "#b9924b", lid: mask, shape: "button"})
+	d.add(`<ellipse cx="139" cy="151" rx="5" ry="2.5" fill="#e7ae8f" stroke="none"/><ellipse cx="221" cy="151" rx="5" ry="2.5" fill="#e7ae8f" stroke="none"/><path d="M173 152 Q180 148 187 152 L181 159 Q177 160 173 152Z" fill="#3f2c20" stroke="none"/>`)
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M165 165 Q178 181 191 165" fill="%s" stroke-width="2"/><path d="m173 170 10 0" stroke="#df9a80" stroke-width="3"/>`, dark)
+		d.add(`<path d="M171 163 q4 5 9 0 q5 5 9 0" fill="none" stroke-width="1.5"/>`)
 	case "failing":
-		d.add(`<path d="M166 174 Q178 163 190 174" fill="none" stroke-width="2.5"/>`)
+		d.add(`<path d="M172 168 q8 -6 16 0" fill="none" stroke-width="1.6"/>`)
 	case "running":
-		d.add(`<path d="m169 171 18 -1" fill="none"/>`)
+		d.add(`<path d="m174 166 12 0" fill="none" stroke-width="1.5"/>`)
 	case "queued":
-		d.add(`<ellipse cx="179" cy="171" rx="4" ry="5" fill="%s" stroke="none"/>`, dark)
+		d.add(`<ellipse cx="180" cy="165" rx="2.5" ry="3" fill="#3f2c20" stroke="none"/>`)
 	default:
-		d.add(`<path d="M172 173 q7 -7 13 -2" fill="none"/>`)
+		d.add(`<path d="M176 166 q4 -4 8 0" fill="none" stroke-width="1.5"/>`)
 	}
-	d.add(`<path d="M168 156 Q178 150 188 156 L181 163 Q176 166 168 156Z" fill="%s" stroke-width="2"/><path d="M178 163 v5 M142 159 l2 0 m5 2 2 0 m53 -1 2 0 m5 -3 2 0" stroke-width="1.5"/></g>`, dark)
+	d.add(`</g>`)
 }

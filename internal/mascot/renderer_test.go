@@ -15,6 +15,7 @@ func validSVG(t *testing.T, b []byte) {
 	dec := xml.NewDecoder(bytes.NewReader(b))
 	root := false
 	ids := map[string]bool{}
+	references := map[string]bool{}
 	for {
 		tok, err := dec.Token()
 		if err == io.EOF {
@@ -37,6 +38,9 @@ func validSVG(t *testing.T, b []byte) {
 			t.Fatalf("unsafe element: %s", e.Name.Local)
 		}
 		for _, a := range e.Attr {
+			if strings.HasPrefix(a.Value, "url(#") && strings.HasSuffix(a.Value, ")") {
+				references[a.Value[5:len(a.Value)-1]] = true
+			}
 			if strings.HasPrefix(strings.ToLower(a.Name.Local), "on") || a.Name.Local == "href" {
 				t.Fatalf("unsafe attribute %s", a.Name.Local)
 			}
@@ -50,6 +54,11 @@ func validSVG(t *testing.T, b []byte) {
 	}
 	if !root {
 		t.Fatal("empty SVG")
+	}
+	for reference := range references {
+		if !ids[reference] {
+			t.Fatalf("unresolved SVG reference: %s", reference)
+		}
 	}
 }
 func TestRenderMatrix(t *testing.T) {

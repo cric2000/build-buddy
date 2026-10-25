@@ -1,70 +1,64 @@
 package mascot
 
-// A compact fan-art depiction of Kurama. Nine separate tails surround a fox
-// silhouette; the eye markings, long ears, muzzle, and claws stay readable small.
+// Kurama sits on soft haunches behind two small forepaws. Broad overlapping
+// tails and ear-to-eye markings keep the silhouette close to a little fox.
 func kurama(d *drawing, r Resolved) {
-	fur, tail, shade, muzzle := "#df873d", "#ed9d50", "#bc642f", "#f3c484"
-	if r.Theme == "dark" {
-		fur, tail, shade = "#eea05b", "#f7b56d", "#cb7e43"
-	} else if r.Theme == "neon" {
-		fur, tail, shade = "#f2a15c", "#ffc578", "#ca7947"
+	fur, tail, shade := "#f58d22", "#f3952e", "#ce711b"
+	if r.Theme == "dark" || r.Theme == "neon" {
+		fur, tail, shade = "#ff9a38", "#f9a343", "#d77d29"
 	}
-	d.add(`<g stroke="#452d2b" stroke-width="2.6"><g data-part="nine-tails"`)
-	if r.Status == "queued" {
-		d.add(` transform="translate(18 42) scale(.9 .8)"`)
-	} else if r.Status == "failing" {
-		d.add(` transform="translate(0 8)"`)
+	d.add(`<g stroke="#25201d" stroke-width="2" fill="%s"><g data-part="nine-tails">`, fur)
+	d.add(`<path data-tail="1" d="M160 198 C139 145 151 81 180 69 C210 82 221 144 199 198Z" fill="%s"/>`, tail)
+	tails := []string{
+		`M175 211 C132 194 102 151 101 109 Q132 99 153 127 C174 150 186 184 185 203Z`,
+		`M173 214 C124 208 81 171 79 133 Q109 117 145 151 Q175 181 185 210Z`,
+		`M174 217 C122 232 65 214 56 175 Q81 160 113 178 Q145 190 185 211Z`,
+		`M177 220 C125 244 69 236 52 200 Q67 188 100 196 Q137 201 188 217Z`,
 	}
-	d.add(`>`)
-	// Separate closed paths, rather than one scalloped shape, preserve all nine
-	// tails even when a client disables animation or renders a small thumbnail.
-	for i, angle := range []int{-84, -63, -42, -21, 0, 21, 42, 63, 84} {
+	for i, path := range tails {
 		fill := tail
-		if i%2 == 0 {
+		if i%2 == 1 {
 			fill = fur
 		}
-		d.add(`<g data-tail="%d" transform="rotate(%d 180 206)"><path d="M173 210 C144 182 142 119 180 52 C172 112 207 175 189 210Z" fill="%s"/><path d="M180 198 Q158 141 177 83" fill="none" stroke="%s" stroke-width="1.8"/></g>`, i+1, angle, fill, shade)
+		d.add(`<path data-tail="%d" d="%s" fill="%s"/><path data-tail="%d" transform="translate(360 0) scale(-1 1)" d="%s" fill="%s"/>`, i*2+2, path, fill, i*2+3, path, fill)
 	}
-	d.add(`</g>`)
-	// A hunched fox torso and haunches avoid reusing the round humanoid bodies.
-	d.add(`<path d="M154 164 Q180 151 207 166 L214 210 Q206 231 181 228 Q150 232 144 212Z" fill="%s"/><path d="m161 174 9 11 9 -13 10 13 10 -11 -2 39 -34 0Z" fill="%s" stroke="none"/><path d="M149 201 Q126 200 130 222 L150 230 165 216 M209 201 Q232 201 229 222 L209 231 194 217" fill="%s"/>`, fur, shade, fur)
-	if r.Status == "passing" {
-		d.add(`<path d="M151 176 Q130 177 119 154 L112 152 116 146 113 138 121 140 124 134 130 149 158 158 M207 176 Q228 175 239 151 L246 149 242 143 245 135 237 137 234 131 228 147 201 159" fill="%s"/><path d="m116 146 5 2 m119 -5 -5 2" fill="none" stroke="#f8dbac" stroke-width="2"/>`, fur)
-	} else if r.Status == "failing" {
-		d.add(`<path d="M152 175 Q133 184 140 206 L160 212 168 203 155 198 160 185 M206 175 Q225 185 218 207 L198 212 190 202 203 198 198 185" fill="%s"/><path d="m150 203 3 6 m4 -5 3 6 m46 -6 -3 6 m-4 -6 -3 6" fill="none" stroke="#f8dbac" stroke-width="2"/>`, fur)
-	} else if r.Status == "running" {
-		d.add(`<path d="M153 173 Q130 183 141 220 L161 224 l7 -8 -14 -4 6 -29 M207 173 Q230 182 218 220 L198 224 l-7 -8 14 -4 -6 -29" fill="%s"/><path d="m146 218 1 7 m7 -5 1 6 m54 -8 -1 7 m-7 -5 -1 6" fill="none" stroke="#f8dbac" stroke-width="2"/>`, fur)
-	} else if r.Status == "queued" {
-		d.add(`<path d="M153 177 Q133 197 154 218 L179 219 l5 -9 -24 -7 4 -17 M206 177 Q227 196 207 218 L180 222 l-5 -9 24 -10 -5 -17" fill="%s"/>`, fur)
-	} else {
-		d.add(`<path d="M152 174 Q133 185 143 216 L164 221 l5 -8 -15 -7 6 -22 M208 175 Q230 175 228 150 L221 143 213 146 l8 11 -14 8" fill="%s"/>`, fur)
+	d.add(`</g><path d="M157 161 Q180 150 203 162 Q218 185 215 214 Q209 234 180 233 Q150 234 145 214 Q143 184 157 161Z"/><path d="M164 178 Q180 169 197 179 L199 221 Q182 234 161 221Z" fill="%s" fill-opacity=".15" stroke="none"/>`, shade)
+	d.add(`<ellipse cx="145" cy="217" rx="15" ry="22" transform="rotate(-28 145 217)"/><ellipse cx="215" cy="217" rx="15" ry="22" transform="rotate(28 215 217)"/><path d="m133 219 3 5 m83 -5 -3 5" fill="none" stroke-width="1.2"/>`)
+	switch r.Status {
+	case "failing":
+		d.add(`<path d="M158 180 Q146 185 151 207 L170 216 Q181 211 171 204 L162 199 M202 180 Q214 185 209 207 L190 216 Q179 211 189 204 L198 199"/>`)
+	case "queued":
+		d.add(`<path d="M157 182 Q144 200 159 219 L180 222 l4 -7 -21 -9 M203 182 Q216 201 201 219 L181 222 l-4 -7 21 -9"/>`)
+	default:
+		d.add(`<path d="M161 179 C150 180 153 210 151 228 Q153 239 170 235 Q177 231 174 221 L176 189 M199 179 C210 180 207 210 209 228 Q207 239 190 235 Q183 231 186 221 L184 189"/><path d="m158 229 -1 5 m7 -5 0 6 m32 -6 0 6 m7 -6 1 5" fill="none" stroke-width="1.1"/>`)
 	}
-	d.add(`<path d="M151 219 Q136 218 135 233 L169 234 l3 -10 M193 224 l3 10 30 -1 Q225 219 210 219" fill="%s"/><path d="m143 229 -2 6 m11 -6 -1 6 m11 -6 0 6 m38 -5 0 5 m9 -6 1 6 m8 -6 2 5" fill="none" stroke="#f8dbac" stroke-width="2"/>`, fur)
-	angle := map[string]int{"passing": -4, "failing": 5, "running": 0, "queued": 11, "unknown": -10}[r.Status]
-	d.add(`<g transform="rotate(%d 180 140)"><path d="M136 121 Q119 94 129 65 Q153 81 157 112 M202 111 Q209 78 232 66 Q239 98 222 122" fill="%s"/><path d="M137 107 132 80 148 102 M213 104 228 80 224 109" fill="#4c302c" stroke="none"/><path d="M135 118 Q150 102 180 105 Q212 103 226 121 L234 137 224 138 235 150 222 152 225 164 208 165 Q198 181 180 184 Q161 181 151 167 L135 168 139 155 125 151 137 140 128 137Z" fill="%s"/><path d="m144 148 16 -4 20 9 19 -9 18 4 -10 22 -27 13 -27 -13Z" fill="%s" stroke="none"/><path d="m139 145 12 2 m-10 7 10 1 m59 -8 12 -3 m-12 10 11 -2" fill="none" stroke-width="2"/>`, angle, fur, fur, muzzle)
-	kuramaFace(d, r, fur)
+	angle := map[string]int{"passing": -2, "failing": 3, "running": 0, "queued": 6, "unknown": -6}[r.Status]
+	d.add(`<g transform="rotate(%d 180 133)"><path d="M144 111 C115 105 96 78 97 52 Q132 51 162 97 M216 111 C245 105 264 78 263 52 Q228 51 198 97"/><path d="M124 110 C129 90 153 84 180 84 Q220 84 236 111 L242 148 Q246 161 222 171 Q180 187 138 171 Q114 161 118 148Z"/>`, angle)
+	// The dark shapes are continuous from the inner ears to the eyes.
+	d.add(`<path data-part="fox-markings" d="M104 64 C119 91 147 99 161 116 Q174 132 171 151 Q149 154 133 137 C112 116 105 89 104 64Z M256 64 C241 91 213 99 199 116 Q186 132 189 151 Q211 154 227 137 C248 116 255 89 256 64Z" fill="#171817" stroke="none"/>`)
+	kuramaFace(d, r)
 	d.add(`</g></g>`)
 }
 
-func kuramaFace(d *drawing, r Resolved, fur string) {
+func kuramaFace(d *drawing, r Resolved) {
 	d.add(`<g data-part="kurama-expression">`)
+	eyes := eyeStyle{left: 153, right: 207, y: 134, width: 15, height: 17, ink: "#121413", brow: "#171817", iris: "#c82f30", light: "#f45b43", lid: "#171817", shape: "fox", slit: true}
 	if r.Status == "queued" {
-		d.add(`<path d="m140 128 6 3 -3 7 -5 -4Z m80 0 -6 3 3 7 5 -4Z" fill="#3f2b2b" stroke="none"/>`)
-	} else {
-		d.add(`<path d="M141 118 158 124 166 142 153 136Z M219 117 201 124 194 142 208 136Z" fill="#3f2b2b" stroke="none"/>`)
+		eyes.brow = "#fff0dc"
 	}
-	expressiveEyes(d, r, eyeStyle{left: 154, right: 206, y: 132, width: 10.5, height: 12.5, ink: "#3f2b2b", brow: "#3f2b2b", iris: "#c07a30", light: "#f7cf70", lid: fur, slit: true})
+	expressiveEyes(d, r, eyes)
+	d.add(`<ellipse cx="180" cy="156" rx="5.5" ry="2.8" fill="#171817" stroke="none"/>`)
 	switch r.Status {
 	case "passing":
-		d.add(`<path d="M160 162 Q179 185 200 161 L194 161 191 169 184 163 177 171 170 164 166 168Z" fill="#472d2b"/><path d="m164 163 6 2 -3 6Z m25 2 6 -3 -1 9Z" fill="#fff1d4" stroke="none"/>`)
+		d.add(`<path d="M169 164 q5 6 11 0 q6 6 11 0" fill="none" stroke-width="1.8"/>`)
 	case "failing":
-		d.add(`<path d="M163 173 Q180 161 197 172" fill="none" stroke-width="2.5"/><path d="m166 172 3 5 3 -7 m16 0 4 5 2 -5" fill="#fff1d4" stroke-width="1.5"/>`)
+		d.add(`<path d="M170 168 q10 -8 20 0" fill="none" stroke-width="1.8"/>`)
 	case "running":
-		d.add(`<path d="m162 167 17 3 20 -4" fill="none"/><path d="m168 168 3 6 3 -5 m14 0 3 4 3 -6" fill="#fff1d4" stroke-width="1.5"/>`)
+		d.add(`<path d="m174 166 12 0" fill="none" stroke-width="1.8"/>`)
 	case "queued":
-		d.add(`<path d="M165 164 Q180 172 196 163" fill="none" stroke-width="2"/><path d="m168 166 3 6 3 -4 m14 -1 3 4 3 -7" fill="#fff1d4" stroke-width="1.5"/>`)
+		d.add(`<path d="M172 164 q8 5 16 0" fill="none" stroke-width="1.5"/>`)
 	default:
-		d.add(`<path d="M164 168 q16 5 31 -3" fill="none"/><path d="m170 169 3 6 3 -5" fill="#fff1d4" stroke-width="1.5"/>`)
+		d.add(`<ellipse cx="181" cy="166" rx="3" ry="3.5" fill="none" stroke-width="1.5"/>`)
 	}
-	d.add(`<path d="M171 152 Q180 148 189 152 L181 159Z" fill="#3f2b2b" stroke-width="1.5"/><path d="m180 159 0 5" fill="none" stroke-width="2"/></g>`)
+	d.add(`</g>`)
 }
