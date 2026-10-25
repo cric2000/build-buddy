@@ -155,7 +155,7 @@ func respond(w http.ResponseWriter, r *http.Request, status int, mime string, bo
 	if status == 200 && cache != "no-store" {
 		etag := fmt.Sprintf(`"%x"`, sha256.Sum256(body))
 		w.Header().Set("ETag", etag)
-		for _, candidate := range strings.Split(r.Header.Get("If-None-Match"), ",") {
+		for _, candidate := range strings.Split(strings.Join(r.Header.Values("If-None-Match"), ","), ",") {
 			candidate = strings.TrimSpace(candidate)
 			if candidate == "*" || strings.TrimPrefix(candidate, "W/") == etag {
 				w.WriteHeader(304)

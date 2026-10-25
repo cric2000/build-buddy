@@ -106,6 +106,14 @@ func TestCaching(t *testing.T) {
 			t.Fatal("conditional request", header, w.Code)
 		}
 	}
+	multiple := httptest.NewRequest("GET", path, nil)
+	multiple.Header.Add("If-None-Match", `"other"`)
+	multiple.Header.Add("If-None-Match", "W/"+etag)
+	multiResponse := httptest.NewRecorder()
+	h.ServeHTTP(multiResponse, multiple)
+	if multiResponse.Code != 304 {
+		t.Fatal("repeated If-None-Match headers did not match")
+	}
 	r := httptest.NewRequest("GET", path, nil)
 	r.Header.Set("If-None-Match", `"stale"`)
 	w := httptest.NewRecorder()

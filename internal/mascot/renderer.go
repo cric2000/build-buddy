@@ -163,9 +163,13 @@ func messageLines(s string) []string {
 	return append(lines, rest)
 }
 func decorations(d *drawing, r Resolved, p palette) {
+	spark := p.highlight
+	if r.Theme == "neon" {
+		spark = "#ffe58a"
+	}
 	if r.Celebration || r.Status == "passing" {
 		for _, pt := range [][2]int{{76, 100}, {285, 150}, {263, 78}} {
-			d.add(`<path class="spark" d="M%d %d l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3Z" fill="%s"/>`, pt[0], pt[1], p.highlight)
+			d.add(`<path class="spark" d="M%d %d l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3Z" fill="%s"/>`, pt[0], pt[1], spark)
 		}
 		if r.Celebration {
 			d.add(`<path d="m91 193 4 7 m176 -91 5 -5 m-173 -26 5 3" stroke="%s" stroke-width="3" stroke-linecap="round"/>`, p.accent)
@@ -177,7 +181,7 @@ func decorations(d *drawing, r Resolved, p palette) {
 	} else if r.Status == "failing" {
 		d.add(`<path d="M269 109 C263 119 262 121 263 124 C265 131 275 128 274 122Z" fill="%s"/>`, p.accent)
 	} else {
-		d.add(`<text x="264" y="114" fill="%s" font-size="25" font-weight="600">?</text>`, p.highlight)
+		d.add(`<text x="264" y="114" fill="%s" font-size="25" font-weight="600">?</text>`, spark)
 	}
 }
 func robot(d *drawing, r Resolved, p palette) {
